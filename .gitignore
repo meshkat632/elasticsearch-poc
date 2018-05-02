@@ -1,0 +1,14 @@
+/.gradle/
+/bin/
+/build/
+/vagrant-scripts/build/
+/data/
+/.vagrant/
+/.idea/
+/.settings/
+/.git/
+/product_search/smart-tvs/
+.classpath
+.project
+gradle.properties
+vagrant.yml

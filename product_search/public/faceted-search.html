@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//cdn.muicss.com/mui-latest/css/mui.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="//cdn.muicss.com/mui-latest/js/mui.min.js"></script>
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.0/axios.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+    <!-- load MUI -->
+    <link href="//cdn.muicss.com/mui-0.9.39/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdn.muicss.com/mui-0.9.39/angular/mui-angular.min.js"></script>
+    <link href="static/style.css" rel="stylesheet" type="text/css" />
+
+    <script>
+        const baseUrl = 'http://localhost:3000';
+        async function search(_searchTerm, _offset) {
+            const response = await axios.get(baseUrl + "/search", { params: { term: _searchTerm, offset: _offset } })
+            this.numHits = response.data.hits.total
+            return response.data.hits.hits
+        }
+
+        async function search(_searchTerm, _offset) {
+            let json = await axios.get(baseUrl + "/search", { params: { term: _searchTerm, offset: _offset } });
+            return json;
+        }
+
+
+        async function searchCurrentprice(_min, _max, _order ,_offset) {
+            let json = await axios.get(baseUrl + "/search-currentprice", { params: { min: _min, max: _max, order:_order, offset: _offset } });
+            return json;
+        }
+
+        angular.module('checkboxExample', [])
+            .controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {
+                $scope.prices = [
+                    {
+                        display: '< 500 € ',
+                        id: "lessThan500",
+                        selected: false,
+                        min: 0,
+                        max: 499
+                    },
+                    {
+                        display: '500 - 749 € ',
+                        id: "between500and749",
+                        selected: false,
+                        min: 500,
+                        max: 749
+                    },
+                    {
+                        display: '750 - 999 € ',
+                        id: "between750and999",
+                        selected: false,
+                        min: 750,
+                        max: 999
+                    },
+                    {
+                        display: '1000 - 2499 € ',
+                        id: "between1000and2499",
+                        selected: false,
+                        min: 1000,
+                        max: 2499
+                    },
+                    {
+                        display: '2500 - 4999 € ',
+                        id: "between2500and4999",
+                        selected: false,
+                        min: 2500,
+                        max: 4999
+                    },
+                    {
+                        display: '> = 4999 € ',
+                        id: "heigherThan4999",
+                        selected: false,
+                        min: 4999,
+                        max: Number.MAX_SAFE_INTEGER
+                    }
+                ];
+
+                $scope.searchCurrentprice = function () {
+                    console.log("searchCurrentprice:", $scope.selectedPrice.min, $scope.selectedPrice.max,$scope.searchOffset );
+                    searchCurrentprice($scope.selectedPrice.min, $scope.selectedPrice.max, $scope.sortingOrder, $scope.searchOffset).then(function (response) {
+                        console.log("response", response);
+                        $scope.numHits = response.data.hits.total;
+                        $scope.searchResults = response.data.hits.hits;
+                        $scope.$apply();
+                    });
+                }
+                //$scope.sortingOrder = "asc";//"desc"
+                $scope.sortingOrder = "desc";//"desc"
+                $scope.selectedPrice = $scope.prices[0];
+                $scope.selectedPrice.selected = true;
+                $scope.toggleSelection = function (price) {
+                    if($scope.selectedPrice.id !== price.id){
+                        $scope.selectedPrice = price;
+                        $scope.searchOffset = 0;
+                        $scope.searchCurrentprice();
+                    }                   
+                }
+
+                $scope.searchOffset = 0;
+                $scope.searchKey = "smart-tv";
+                $scope.search = function () {
+                    console.log("search:", $scope.searchKey, $scope.searchOffset);
+                    search($scope.searchKey, $scope.searchOffset).then(function (response) {
+                        console.log("response", response);
+                        $scope.numHits = response.data.hits.total;
+                        $scope.searchResults = response.data.hits.hits;
+                        $scope.$apply();
+                    });
+                }
+
+
+                $scope.prevResultsPage = function () {
+                    console.log("prevResultsPage:" + $scope.searchOffset);
+                    if ($scope.searchOffset == 0) return;
+                    $scope.searchOffset = $scope.searchOffset - 9;
+                    $scope.searchCurrentprice();
+                }
+                $scope.nextResultsPage = function () {
+                    console.log("nextResultsPage :" + $scope.searchOffset + " :" + $scope.numHits);
+                    if ($scope.searchOffset + $scope.searchResults.length === $scope.numHits) return;
+                    $scope.searchOffset = $scope.searchOffset + 9;
+                    $scope.searchCurrentprice();
+                }
+
+                $scope.searchCurrentprice();
+
+            }]);
+    </script>
+
+</head>
+
+<body ng-app="checkboxExample" ng-controller="ExampleController">        
+    <div id="sidebar">
+        <div class="mui-row">
+            <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                <div class="mui--text-black-54 mui--text-body2">Prices                     
+
+                </div>
+                <div class="mui-divider"></div>
+                
+                <div class="mui--text-black-54">
+                    <div ng-repeat="price in prices">
+                        <div class="action-checkbox">
+                            <input id="{{price.id}}" type="radio" value="{{price.id}}" ng-click="toggleSelection(price)" ng-checked="selectedPrice.id === price.id"/>
+                            <label for="{{price}}"></label> {{price.display}}
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+    </div>
+
+
+    <div id="content" class="mui-container-fluid">
+        <div class="mui-row">
+            <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                <br>
+                <br>
+                <div class="mui-panel pagination-panel">
+                    <div class="mui-container-fluid">
+                        <div class="mui-row">
+                            <div class="mui-col-md-8">
+                                <div class="mui--text-headline">{{ numHits }} Hits</div>
+                                <div class="mui--text-subhead">Displaying Results {{ searchOffset }} - {{ searchOffset + 9 }} </div>
+                            </div>
+                            <div class="mui-col-md-4">
+                                <div class="mui-row">
+                                    <button class="mui-btn mui-btn--flat" ng-click="prevResultsPage()">Prev Page</button>
+                                    <button class="mui-btn mui-btn--flat" ng-click="nextResultsPage()">Next Page</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-panel" ng-repeat="hit in searchResults">
+                    <div class="mui--text-subhead"><img src="{{hit._source.manufacturerimage}}" alt="{{hit._source.brand}}"></div>
+                    <div class="mui--text-title" v-html="hit._source.displayname"></div>
+                    <div class="mui-divider"></div>
+                    <div class="mui--text-subhead"> {{ hit._source.shortlabel}}</div>
+                    <div class="mui--text-subhead">currentprice:<b>{{ hit._source.currentprice }}</b></div>
+                    <div class="mui--text-subhead">brand:<b>{{ hit._source.brand }}-{{ hit._source.modelname }}-{{ hit._source.modelnumber }}</b></div>
+                    <div class="mui--text-subhead">modelname:<b>{{ hit._source.modelname }}</b></div>
+                    <div class="mui--text-subhead">id:<b>{{ hit._source.id }}</b></div>
+                    <div class="mui--text-subhead">link:
+                        <a v-bind:href="''+hit._source.seoUrl+''">{{ hit._source.seoUrl }}</a>
+                    </div>
+                    <div class="mui--text-subhead">customerrating:<b>{{ hit._source.customerrating }}</b></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

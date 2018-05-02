@@ -1,0 +1,4 @@
+[http]
+    proxy = <%= http_proxy %>
+[https]
+    proxy = <%= http_proxy %>

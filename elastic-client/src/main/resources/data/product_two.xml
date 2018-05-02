@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<document categoryids="SaturnDEdec473882" collection="impulse" id="SaturnDEdece1445052">
+        <attribute name="group_id"><![CDATA[SaturnDEdec473882]]></attribute>
+        <attribute name="language"><![CDATA[de]]></attribute>
+        <attribute name="rollout"><![CDATA[SEDEde]]></attribute>
+        <attribute name="currprice1015"><![CDATA[7.99]]></attribute>
+        <attribute name="displayoldprice1015"><![CDATA[0]]></attribute>
+        <attribute name="displayrecoprice1015"><![CDATA[0]]></attribute>
+        <attribute name="oldprice1015"><![CDATA[10.99]]></attribute>
+        <attribute name="availability1015"><![CDATA[1]]></attribute>
+        <attribute name="currentprice"><![CDATA[7.99]]></attribute>
+        <attribute name="availability"><![CDATA[1]]></attribute>
+        <attribute name="availability_market"><![CDATA[0]]></attribute>
+        <attribute name="modelnumber"><![CDATA[1887230]]></attribute>
+        <attribute name="ean"><![CDATA[0888430554191]]></attribute>
+        <attribute name="brandid"><![CDATA[7808]]></attribute>
+        <attribute name="releasedate"><![CDATA[2014-11-28]]></attribute>
+        <attribute name="customerrating"><![CDATA[0.00000]]></attribute>
+        <attribute name="salescount"><![CDATA[0]]></attribute>
+        <attribute name="availabilityindicator"><![CDATA[4]]></attribute>
+        <attribute name="productgroup"><![CDATA[1517]]></attribute>
+        <attribute name="availability_44"><![CDATA[true]]></attribute>
+        <attribute name="availability_872"><![CDATA[false]]></attribute>
+        <attribute name="availability_873"><![CDATA[false]]></attribute>
+        <attribute name="notReturnable"><![CDATA[0]]></attribute>
+        <attribute name="marketplaces"><![CDATA[false]]></attribute>
+        <attribute name="manufacturerordnumber"><![CDATA[88843055419]]></attribute>
+        <attribute name="customerratingcount"><![CDATA[0]]></attribute>
+        <attribute name="displayifsoldoutonline"><![CDATA[0]]></attribute>
+        <attribute name="clubproduct"><![CDATA[0]]></attribute>
+        <attribute name="featureframeid"><![CDATA[FET_FRA_1360]]></attribute>
+        <attribute name="campaign"><![CDATA[Standard 0 Pct Financing]]></attribute>
+        <attribute name="campaigntype"><![CDATA[Discount]]></attribute>
+        <attribute name="modelname"><![CDATA[Where We Are: Live From San Siro Stadium]]></attribute>
+        <attribute name="productname"><![CDATA[Where We Are: Live From San Siro Stadium]]></attribute>
+        <attribute name="brand"><![CDATA[SONY MUSIC ENTERTAINMENT (GER)]]></attribute>
+        <attribute name="shortlabel"><![CDATA[SONY MUSIC ENTERTAINMENT (GER) Where We Are: Live From San Siro Stadium]]></attribute>
+        <attribute name="longdescription"><![CDATA[<longDescriptionList>
+<longDescription>
+<headline/>
+<body>Trackliste:&lt;br&gt;
+01. Midnight Memories&lt;br&gt;
+02. Little Black Dress&lt;br&gt;
+03. Kiss You&lt;br&gt;
+04. Why Don't We Go There&lt;br&gt;
+05. Rock Me&lt;br&gt;
+06. Don't Forget Where You Belong&lt;br&gt;
+07. Live While We're Young&lt;br&gt;
+08. C'mon, C'mon&lt;br&gt;
+09. Right Now&lt;br&gt;
+10. Through The Dark&lt;br&gt;
+11. Happily&lt;br&gt;
+12. Little Things&lt;br&gt;
+13. Moments&lt;br&gt;
+14. Strong&lt;br&gt;
+15. Better Than Words&lt;br&gt;
+16. Alive&lt;br&gt;
+17. One Thing&lt;br&gt;
+18. Diana&lt;br&gt;
+19. What Makes You Beautiful&lt;br&gt;
+20. You &amp; I&lt;br&gt;
+21. Story of My Life&lt;br&gt;
+22. Little White Lies&lt;br&gt;
+23. Best Song Ever&lt;br&gt;</body>
+<order>1</order>
+</longDescription>
+<fallback>Trackliste:
+01. Midnight Memories
+02. Little Black Dress
+03. Kiss You
+04. Why Don't We Go There
+05. Rock Me
+06. Don't Forget Where You Belong
+07. Live While We're Young
+08. C'mon, C'mon
+09. Right Now
+10. Through The Dark
+11. Happily
+12. Little Things
+13. Moments
+14. Strong
+15. Better Than Words
+16. Alive
+17. One Thing
+18. Diana
+19. What Makes You Beautiful
+20. You &amp; I
+21. Story of My Life
+22. Little White Lies
+23. Best Song Ever</fallback></longDescriptionList>]]></attribute>
+        <attribute name="availabilitytext"><![CDATA[Lieferung in 5-6 Werktagen]]></attribute>
+        <attribute name="featurePRODFEAT10585"><![CDATA[One Direction]]></attribute>
+        <attribute name="featurePRODFEAT12856"><![CDATA[Syco]]></attribute>
+        <attribute name="featurePRODFEAT11560"><![CDATA[DVD]]></attribute>
+        <attribute name="featurePRODFEAT12069"><![CDATA[107 Min.]]></attribute>
+        <attribute name="featurePRODFEAT12715"><![CDATA[0888430554191]]></attribute>
+        <attribute name="featurePRODFEAT12073"><![CDATA[Deutsch]]></attribute>
+        <attribute name="featurePRODFEAT10988"><![CDATA[Pop]]></attribute>
+        <attribute name="featurePRODFEAT12855"><![CDATA[Where We Are - Live From San Siro Stadium]]></attribute>
+        <attribute name="featurePRODFEAT12862"><![CDATA[145 Min.]]></attribute>
+        <attribute name="featurePRODFEAT13021"><![CDATA[Musik]]></attribute>
+        <attribute name="featurePRODFEAT12863"><![CDATA[Musik, PCM 2.0 Stereo]]></attribute>
+        <attribute name="featurePRODFEAT12624"><![CDATA[<Track><trackNo>1</trackNo><title>Midnight Memories</title><artist>One Direction</artist><playPeriod>180</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>2</trackNo><title>Little Black Dress</title><artist>One Direction</artist><playPeriod>137</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>3</trackNo><title>Kiss You</title><artist>One Direction</artist><playPeriod>184</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>4</trackNo><title>Why Don't We Go There</title><artist>One Direction</artist><playPeriod>168</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>5</trackNo><title>Rock Me</title><artist>One Direction</artist><playPeriod>186</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>6</trackNo><title>Don't Forget Where You Belong</title><artist>One Direction</artist><playPeriod>326</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>7</trackNo><title>Live While We're Young</title><artist>One Direction</artist><playPeriod>198</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>8</trackNo><title>C'mon, C'mon</title><artist>One Direction</artist><playPeriod>169</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>9</trackNo><title>Right Now</title><artist>One Direction</artist><playPeriod>212</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>10</trackNo><title>Through The Dark</title><artist>One Direction</artist><playPeriod>218</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>11</trackNo><title>Happily</title><artist>One Direction</artist><playPeriod>174</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>12</trackNo><title>Little Things</title><artist>One Direction</artist><playPeriod>215</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>13</trackNo><title>Moments</title><artist>One Direction</artist><playPeriod>238</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>14</trackNo><title>Strong</title><artist>One Direction</artist><playPeriod>177</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>15</trackNo><title>Better Than Words</title><artist>One Direction</artist><playPeriod>199</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>16</trackNo><title>Alive</title><artist>One Direction</artist><playPeriod>197</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>17</trackNo><title>One Thing</title><artist>One Direction</artist><playPeriod>192</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>18</trackNo><title>Diana</title><artist>One Direction</artist><playPeriod>179</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>19</trackNo><title>What Makes You Beautiful</title><artist>One Direction</artist><playPeriod>197</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>20</trackNo><title>You & I</title><artist>One Direction</artist><playPeriod>273</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>21</trackNo><title>Story Of My Life</title><artist>One Direction</artist><playPeriod>241</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>22</trackNo><title>Little White Lies</title><artist>One Direction</artist><playPeriod>189</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>23</trackNo><title>Best Song Ever</title><artist>One Direction</artist><playPeriod>331</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>24</trackNo><title>The Road To San Siro (Documentary)</title><artist>One Direction</artist><playPeriod>1492</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>25</trackNo><title>Live While We're Young - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>198</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>26</trackNo><title>C'mon, C'mon - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>169</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>27</trackNo><title>Closing Credits - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>212</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>28</trackNo><title>Through The Dark - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>218</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>29</trackNo><title>Happily - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>174</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>30</trackNo><title>Little Things - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>215</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>31</trackNo><title>Moments - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>238</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>32</trackNo><title>Strong - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>177</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>33</trackNo><title>Better Than Words - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>199</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>34</trackNo><title>Alive - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>197</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>35</trackNo><title>One Thing - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>192</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>36</trackNo><title>Diana - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>179</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>37</trackNo><title>What Makes You Beautiful - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>197</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>38</trackNo><title>You & I - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>273</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>39</trackNo><title>Story Of My Life - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>241</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>40</trackNo><title>Little White Lies - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>189</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>41</trackNo><title>Best Song Ever - Live From San Siro Stadium</title><artist>One Direction</artist><playPeriod>331</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>42</trackNo><title>Closing Credits</title><artist>One Direction</artist><playPeriod>195</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track><Track><trackNo>43</trackNo><title>The Road To San Siro</title><artist>One Direction</artist><playPeriod>1492</playPeriod><mediaUrl></mediaUrl><setkz>1</setkz></Track>]]></attribute>
+        <attribute name="featurePRODFEAT11281"><![CDATA[One Direction]]></attribute>
+        <attribute name="artist"><![CDATA[One Direction]]></attribute>
+        <attribute name="featurePRODFEAT12964"><![CDATA[1]]></attribute>
+        <attribute name="featurePRODFEAT12858"><![CDATA[Spielfilm (Darsteller)]]></attribute>
+        <attribute name="featurePRODFEAT13789"><![CDATA[Freigegeben ohne Altersbeschränkung]]></attribute>
+        <attribute name="featurePRODFEAT13172"><![CDATA[2014]]></attribute>
+        <attribute name="featurePRODFEAT10463"><![CDATA[1.78:1]]></attribute>
+        <attribute name="featurePRODFEAT13165"><![CDATA[One Direction - Where We Are: Live From San Siro Stadium]]></attribute>
+        <attribute name="displayname"><![CDATA[One Direction - Where We Are: Live From San Siro Stadium - (DVD)]]></attribute>
+        <attribute name="seoUrl"><![CDATA[//www.saturn.de/de/product/_one-direction-where-we-are-live-from-san-siro-stadium-pop-dvd-1887230.html]]></attribute>
+        <attribute name="manufacturerimage"><![CDATA[//picscdn.redblue.de/doi/pixelboxx-mss-62268704/fee_51_51_png]]></attribute>
+</document>  
