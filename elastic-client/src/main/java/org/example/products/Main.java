@@ -1,6 +1,9 @@
 package org.example.products;
 import javax.xml.stream.XMLStreamException;
 
+import org.example.groups.Category;
+import org.example.groups.CategoryMap;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) throws IOException, XMLStreamException {
@@ -20,12 +24,15 @@ public class Main {
 
         int iterator = 0;
         int iterator2 = 0;
-
-        /*
-        "C:/meshkat-shared-folder/searchengine_poc_java/products.xml"
-        */
-        
-        XmlReader reader = new XmlReader("products.xml");
+        	
+    	final String xmlFile = "src/main/resources/groups.xml";
+		
+		Optional<CategoryMap> categoryMap = CategoryMap.buildFromFile(xmlFile);
+		if(! categoryMap.isPresent()) {
+			throw new IllegalArgumentException("could build category tree");			
+		}		
+		
+        XmlReader reader = new XmlReader("products.xml", categoryMap.get());
         Map<String,String> document;
         Gson gson = new Gson();        
         

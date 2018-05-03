@@ -8,7 +8,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -24,13 +26,23 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.example.groups.CategoryMap;
 
 public class Test {
 
 	public static FeatureMappings featureMappings;
+	public static CategoryMap categoryMappings;
+	
     public static void main(String[] args) throws IOException, XMLStreamException {
     	
     	featureMappings= new FeatureMappings();
+    	final String xmlFile = "src/main/resources/groups.xml";
+		
+		Optional<CategoryMap> _categoryMap = CategoryMap.buildFromFile(xmlFile);
+		if(! _categoryMap.isPresent()) {
+			throw new IllegalArgumentException("could build category tree");			
+		}	
+		categoryMappings = _categoryMap.get();
     	
     	
     	
@@ -49,53 +61,12 @@ public class Test {
             readDocuments(reader, new OnDocumentReady() {
 				
 				@Override
-				public void onDocumentReady(Document document) {					
+				public void onDocumentReady(Document document) {			
 					
-					if(document.hasAttribute("SaturnDEdec474973")) {
-						//System.out.println(document.toIndexable());
-						writeToFile(document.toIndexable(), "smart-tv-"+document.getId());
-						/*
-						try {
-							
-							
-							String response = postToElasticSearch(document.toIndexable(), document.getId());
-							System.out.println("response:"+response);
-								
-							
-							Thread.sleep(100);
-						} catch (Exception e) {					
-							e.printStackTrace();
-						}
-						*/
-						/*
-						try {
-						Thread.sleep(100);
-						}catch (Exception e) {					
-							e.printStackTrace();
-						}
-						*/
-					}
-					
-					/*
-					
-					System.out.println(document.toIndexable());
-					
-					writeToFile(document.toIndexable(), document.getId());					
-					
-					try {
-					
+					if(document.hasAttribute("SaturnDEdec474973")) {						
+						writeToFile(document.toIndexable(categoryMappings), "smart-tv-"+document.getId());
 						
-						String response = postToElasticSearch(document.toIndexable(), document.getId());
-						System.out.println("response:"+response);
-							
-						
-						Thread.sleep(100);
-					} catch (Exception e) {					
-						e.printStackTrace();
-					}
-					
-					*/
-					
+					}					
 				}
 			});                 
             
@@ -245,9 +216,9 @@ public class Test {
     		 String displayName = featureMappings.getDisplayName(attributeName);
     		 if(displayName != null)
     			 return new Attribute(displayName, attributeValue);    		  
-    	 } 
-    		 
-         return new Attribute(attributeName , attributeValue);    	 
+    	 }     		
+             
+    	 return new Attribute(attributeName , attributeValue);
     	 
 	}     
     
@@ -257,7 +228,7 @@ public class Test {
     	C:\Users\meshkatul\Box Sync\rise-search\mms-elasticsearch-poc\guttenberg_search\smart-tvs
     	*/
     	
-    	try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:/Users/meshkatul/Box Sync/rise-search/mms-elasticsearch-poc/guttenberg_search/smart-tvs/"+fileName+".json"))) {
+    	try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:/Users/meshkatul/Box Sync/rise-search/mms-elasticsearch-poc/product_search/smart-tvs/"+fileName+".json"))) {
 		//try (BufferedWriter bw = new BufferedWriter(new FileWriter("/data/"+fileName+".json"))) {
 			bw.write(content);			
 			// no need to close it.

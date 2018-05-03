@@ -7,6 +7,10 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import org.example.groups.Category;
+import org.example.groups.CategoryMap;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,19 +18,22 @@ import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class XmlReader {
 
     private XMLEventReader xmlEventReader = null;
     private FeatureMappings mappings;
+    private CategoryMap categoryMap;
 
-    public XmlReader(String path) throws IOException, XMLStreamException {
+    public XmlReader(String path, CategoryMap categoryMap) throws IOException, XMLStreamException {
         InputStream xml = new FileInputStream(path);
 
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         xmlEventReader = xmlInputFactory.createXMLEventReader(xml);
 
         mappings = new FeatureMappings();
+        this.categoryMap = categoryMap;
 
     }
 

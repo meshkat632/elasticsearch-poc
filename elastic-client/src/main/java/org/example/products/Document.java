@@ -1,6 +1,7 @@
 package org.example.products;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,12 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.example.groups.CategoryMap;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 public class Document {
@@ -65,20 +70,38 @@ public class Document {
 		return this.id;
 	}
 
-	public String toIndexable() {
+	public String toIndexable(CategoryMap categoryMappings) {
 		
-		Map<String, String> map = new HashMap<>();		
+		Map<String, Object> map = new HashMap<>();		
 		this.attributes.stream().forEach(attribute-> {
 			map.put(attribute.getName(),attribute.getValue());
 		});
 		map.put("categoryids", this.categoryids);
 		map.put("collection", this.collection);
 		map.put("id", this.id);
+		
+		
+		JsonArray categorys = new JsonArray();
+		
+		Arrays.asList(this.categoryids.split(" ")).stream().forEach(categoryid -> {
+			categoryMappings.getCategoryWithId(categoryid).ifPresent(category ->{
+				System.out.println(category);
+				JsonObject categoryJson = new JsonObject();
+				// add a property calle title to the albums object
+				categoryJson.addProperty("categoryId", category.getId());
+				categoryJson.addProperty("categoryName", category.getCategory());
+				categorys.add(categoryJson);			
+			});
+		});
+		
+		map.put("categories", categorys);		
 		return gson.toJson(map);		
 	}
 
 	public boolean hasAttribute(String categoryid) {
 		return this.categoryids.contains(categoryid);
 	}
+
+	 
 
 }

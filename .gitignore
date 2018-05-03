@@ -8,6 +8,9 @@
 /.settings/
 /.git/
 /product_search/smart-tvs/
+/elastic-client/bin/
+/elastic-client/settings/
+/elastic-client/.gradle/
 .classpath
 .project
 gradle.properties
