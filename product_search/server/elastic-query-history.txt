@@ -1,0 +1,81 @@
+GET smart-tv/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 0, 
+  "aggregations": {
+      "by_brand": {
+         "terms": {"field": "brand"}
+      }
+   }
+}
+
+{
+  "took": 17,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 1768,
+    "max_score": 0,
+    "hits": []
+  },
+  "aggregations": {
+    "by_brand": {
+      "doc_count_error_upper_bound": 13,
+      "sum_other_doc_count": 533,
+      "buckets": [
+        {
+          "key": "OEHLBACH",
+          "doc_count": 519
+        },
+        {
+          "key": "MAJA",
+          "doc_count": 101
+        },
+        {
+          "key": "SAMSUNG",
+          "doc_count": 94
+        },
+        {
+          "key": "HAMA",
+          "doc_count": 86
+        },
+        {
+          "key": "SONY",
+          "doc_count": 83
+        },
+        {
+          "key": "VOGEL�S",
+          "doc_count": 78
+        },
+        {
+          "key": "YAMAHA",
+          "doc_count": 77
+        },
+        {
+          "key": "LG",
+          "doc_count": 73
+        },
+        {
+          "key": "LOEWE",
+          "doc_count": 66
+        },
+        {
+          "key": "PANASONIC",
+          "doc_count": 58
+        }
+      ]
+    }
+  }
+}
+
+
+
+
+

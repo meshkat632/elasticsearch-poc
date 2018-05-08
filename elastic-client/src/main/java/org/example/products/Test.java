@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.example.groups.Category;
 import org.example.groups.CategoryMap;
 
 public class Test {
@@ -61,12 +62,32 @@ public class Test {
             readDocuments(reader, new OnDocumentReady() {
 				
 				@Override
-				public void onDocumentReady(Document document) {			
+				public void onDocumentReady(Document document) {
+					Optional<Category> rootCat = categoryMappings.getCategoryWithId("SaturnDEdec633087");
+					if(rootCat.isPresent()) {
+						List<String> rootPath = document.isOfCategory(rootCat.get(), categoryMappings);
+						if (rootPath.size()> 0) {
+							System.out.println("rootPath:"+rootPath);
+							writeToFile(document.toIndexable(categoryMappings), "tv-heimkino-zubehör-"+document.getId());
+							/*
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							*/	
+						}						
+					}
 					
+					
+					
+					
+					/*
 					if(document.hasAttribute("SaturnDEdec474973")) {						
-						writeToFile(document.toIndexable(categoryMappings), "smart-tv-"+document.getId());
-						
+						writeToFile(document.toIndexable(categoryMappings), "smart-tv-"+document.getId());						
 					}					
+					*/
 				}
 			});                 
             

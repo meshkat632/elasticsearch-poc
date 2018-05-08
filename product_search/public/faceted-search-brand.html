@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//cdn.muicss.com/mui-latest/css/mui.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="//cdn.muicss.com/mui-latest/js/mui.min.js"></script>
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.0/axios.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+    <!-- load MUI -->
+    <link href="//cdn.muicss.com/mui-0.9.39/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdn.muicss.com/mui-0.9.39/angular/mui-angular.min.js"></script>
+    <link href="static/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script>
+        const baseUrl = 'http://localhost:3000';
+        async function getBrandFacet(keyword, offset) {
+
+            const elasticBaseUrl = 'http://localhost:9200';
+
+            var elasticQuery = {
+                "from": offset,
+                "query": {
+                    "match": {
+                        "text": {
+                            "query": keyword
+                        }
+                    }
+                },
+                "aggregations": {
+                    "by_brand": {
+                        "terms": {
+                            "field": "brand",
+                            "size": 5
+                        }
+                    }
+                }
+            };
+
+
+            let json = await axios.post(elasticBaseUrl + "/smart-tv/_search", elasticQuery);
+            return json;
+        }
+
+
+        async function getByBrands(keyword, offset, brands) {
+
+            console.log("keyword", keyword);
+            console.log("offset", offset);
+            console.log("brands", brands);
+            const elasticBaseUrl = 'http://localhost:9200';
+
+            var elasticQueryTemplate = {
+                "from": offset,
+                "query": {
+                    "bool": {
+                        "must": {
+                            "match_all": {}
+                        },
+                        "filter": {
+                            "terms": { "brand": brands.map(item => item.key) }
+                        }
+                    }
+                },
+                "aggregations": {
+                    "by_brand": {
+                        "terms": {
+                            "field": "brand",
+                            "size": 20
+                        }
+                    }
+                }
+            };
+
+            if (!(keyword === null || keyword === "")) {                
+                elasticQueryTemplate.query.bool.must = {                    
+                    "match": {
+                        "text": keyword
+                    }                
+                };                
+            }
+
+            if (brands.length == 0) {                
+                delete elasticQueryTemplate.query.bool.filter;
+            }
+ 
+
+            console.log("query dsl:"+JSON.stringify(elasticQueryTemplate));
+            let json = await axios.post(elasticBaseUrl + "/smart-tv/_search", elasticQueryTemplate);
+            return json;
+        }
+
+        async function search(_searchTerm, _offset) {
+            let json = await axios.get(baseUrl + "/search", { params: { term: _searchTerm, offset: _offset } });
+            return json;
+        }
+
+
+        async function searchCurrentprice(_min, _max, _order, _offset) {
+            let json = await axios.get(baseUrl + "/search-currentprice", { params: { min: _min, max: _max, order: _order, offset: _offset } });
+            return json;
+        }
+
+
+
+        angular.module('checkboxExample', []).controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {
+
+            $scope.sortingOrder = "desc";//"desc"
+
+            $scope.selectedBrands = [];
+
+            $scope.getBrandWithName = function (brandName) {
+                console.log("getBrandWithName", brandName, $scope.brands.filter(item => item.key === brandName));
+
+                return $scope.brands.filter(item => item.key === brandName)[0];
+            }
+
+                               
+            $scope.newSearch = function () {
+                console.log("newSearch");
+                $scope.searchOffset = 0;                
+                $scope.search();
+
+            }
+
+            $scope.toggleSelection = function (_selectedBrand) {
+                console.log("toggleSelection", _selectedBrand);
+                $scope.searchOffset = 0;
+                _selectedBrand.isSelected = !_selectedBrand.isSelected;
+                if (_selectedBrand.isSelected === true) {
+                    $scope.selectedBrands.push(_selectedBrand);
+                }
+                $scope.selectedBrands = $scope.selectedBrands.filter(item => item.isSelected);
+                $scope.search();
+
+            }
+
+            $scope.searchOffset = 0;
+            $scope.searchKey = "";
+
+            $scope.search = function () {
+
+                getByBrands($scope.searchKey, $scope.searchOffset, $scope.selectedBrands).then(function (response) {
+                    console.log("response", response);
+                    $scope.numHits = response.data.hits.total;
+                    $scope.searchResults = response.data.hits.hits;
+                    
+                    if ($scope.selectedBrands.length === 0){
+                        $scope.brands = response.data.aggregations.by_brand.buckets;
+                    }else {
+                        /*
+                        $scope.brands.forEach(brand => {
+                            brand.doc_count = 0;
+                           
+                            });
+
+                            response.data.aggregations.by_brand.buckets.forEach( item =>{
+                                $scope.brands.forEach(brand => {
+                                    if(item.key === brand.key){
+                                        brand.doc_count = item.doc_count;
+                                    }
+                                });
+                            });                                
+                        */    
+
+                        
+                    }
+                    /*
+                    if(response.data.aggregations.by_brand.buckets.length === 0 && $scope.selectedBrands.length !== 0){
+                        $scope.brands.forEach(item => item.doc_count = 0);
+                    }
+                    */
+                    //
+                        
+                    $scope.$apply();
+                });
+
+            }
+
+
+            $scope.prevResultsPage = function () {
+                console.log("prevResultsPage:" + $scope.searchOffset);
+                if ($scope.searchOffset == 0) return;
+                $scope.searchOffset = $scope.searchOffset - 9;
+                $scope.search();
+            }
+            $scope.nextResultsPage = function () {
+                console.log("nextResultsPage :" + $scope.searchOffset + " :" + $scope.numHits);
+                if ($scope.searchOffset + $scope.searchResults.length === $scope.numHits) return;
+                $scope.searchOffset = $scope.searchOffset + 9;
+                $scope.search();
+            }
+
+            $scope.searchResults = [];
+            $scope.search();
+
+        }]);
+    </script>
+</head>
+
+<body ng-app="checkboxExample" ng-controller="ExampleController">
+    <div id="sidebar">
+        <div class="mui-row">
+            <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                <div class="mui--text-black-54 mui--text-body2">Key Word: {{searchKey}}</div>
+                <div class="mui-divider"></div>
+                <div class="mui--text-black-54">
+                    <input type="text" ng-model="searchKey" ng-model-options="{ debounce: 500 }" ng-change="newSearch()">
+                </div>
+
+
+                <div class="mui--text-black-54 mui--text-body2">
+                    Brands
+                </div>
+
+
+                <div class="mui-divider"></div>
+
+                <div class="mui--text-black-54">
+                    <div ng-repeat="brand in brands">
+                        <!--
+                            {{brand.key}}:{{brand.doc_count}}
+                             -->
+                        <div class="action-checkbox">
+                            <input id="{{brand.key}}" type="checkbox" ng-click="toggleSelection(brand, event)" />
+                            <label for="{{brand.key}}"></label> {{brand.key}} <b>{{brand.doc_count}}</b>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--
+                <div class="mui-divider"></div>
+                <div class="mui--text-black-54 mui--text-body2">                    
+                    {{selectedBrands}}
+                    <div ng-repeat="selectedBrand in selectedBrands">
+                            <button class="btn" ng-click="toggleSelection(getBrandWithName(selectedBrand.key))">{{selectedBrand.key}} <i class="fa fa-close"></i></button>                            
+                        </div>
+                </div>
+            -->
+
+            </div>
+        </div>
+    </div>
+
+
+    <div id="content" class="mui-container-fluid">
+        <div class="mui-row">
+            <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                <br>
+                <br>
+                <div class="mui-panel pagination-panel">
+                    <div class="mui-container-fluid">
+                        <div class="mui-row">
+                            <div class="mui-col-md-8">
+                                <div class="mui--text-headline">
+                                    Results for '{{searchKey}}'
+                                </div>
+                                <div class="mui--text-subhead">{{ numHits }} Hits. Displaying Results {{ searchOffset }} - {{ searchOffset + 9 }} </div>
+                            </div>
+                            <div class="mui-col-md-4">
+                                <div class="mui-row">
+                                    <button class="mui-btn mui-btn--flat" ng-click="prevResultsPage()">Prev Page</button>
+                                    <button class="mui-btn mui-btn--flat" ng-click="nextResultsPage()">Next Page</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mui-panel" ng-repeat="hit in searchResults">
+                    <div class="mui--text-subhead"><img src="{{hit._source.manufacturerimage}}" alt="{{hit._source.brand}}"></div>
+                    <div class="mui--text-title" v-html="hit._source.displayname"></div>
+                    <div class="mui-divider"></div>
+                    <div class="mui--text-subhead"> {{ hit._source.shortlabel}}</div>
+                    <div class="mui--text-subhead">currentprice:<b>{{ hit._source.currentprice }}</b></div>
+                    <div class="mui--text-subhead">brand:<b>{{ hit._source.brand }}</b></div>
+                    <div class="mui--text-subhead">modelnumber:<b>{{ hit._source.modelnumber }}</b></div>
+                    <div class="mui--text-subhead">modelname:<b>{{ hit._source.modelname }}</b></div>
+                    <div class="mui--text-subhead">id:<b>{{ hit._source.id }}</b></div>
+                    <div class="mui--text-subhead">link:
+                        <a v-bind:href="''+hit._source.seoUrl+''">{{ hit._source.seoUrl }}</a>
+                    </div>
+                    <div class="mui--text-subhead">customerrating:<b>{{ hit._source.customerrating }}</b></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

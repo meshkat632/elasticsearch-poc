@@ -48,20 +48,19 @@ router.get('/search',
 )
 
 router.get('/search-currentprice',
-validate({
-  query: {    
-    order:joi.string().regex(/^[desc|asc]+$/).default("desc"),
-    offset: joi.number().integer().min(0).default(0),
-    min: joi.number().integer().min(0).default(0),
-    max: joi.number().integer().min(0).default(10000)
+  validate({
+    query: {
+      order: joi.string().regex(/^[desc|asc]+$/).default("desc"),
+      offset: joi.number().integer().min(0).default(0),
+      min: joi.number().integer().min(0).default(0),
+      max: joi.number().integer().min(0).default(10000)
+    }
+  }),
+  async (ctx, next) => {
+    const { filedName, min, max, order, offset } = ctx.request.query
+    ctx.body = await search.queryRangeOnCurrentprice(min, max, order, offset)
   }
-}),
-async (ctx, next) => {
-  const { filedName, min, max, order,offset } = ctx.request.query
-  ctx.body = await search.queryRangeOnCurrentprice(min, max, order, offset)
-}
 )
-
 
 const port = process.env.PORT || 3000
 

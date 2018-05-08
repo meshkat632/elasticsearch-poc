@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.example.groups.Category;
 import org.example.groups.CategoryMap;
 
 import com.google.gson.Gson;
@@ -69,6 +70,26 @@ public class Document {
 	public String getId() {		
 		return this.id;
 	}
+	
+	public List<String> isOfCategory(Category rootCategory, CategoryMap categoryMappings) {		
+		
+		List<String> rootPaths = new ArrayList<>();
+		Arrays.asList(this.categoryids.split(" ")).stream().forEach(categoryid -> {
+			categoryMappings.getCategoryWithId(categoryid).ifPresent(category ->{
+				System.out.println(category);
+				JsonObject categoryJson = new JsonObject();
+				// add a property calle title to the albums object
+				categoryJson.addProperty("categoryId", category.getId());
+				categoryJson.addProperty("categoryName", category.getCategory());
+				categoryJson.addProperty("categoryPath", category.getPathToRoot());
+				if(category.getPathToRoot().contains(rootCategory.getCategory())) {
+					rootPaths.add(category.getPathToRoot());											
+				}		
+							
+			});
+		});		
+		return rootPaths;
+	}
 
 	public String toIndexable(CategoryMap categoryMappings) {
 		
@@ -90,7 +111,9 @@ public class Document {
 				// add a property calle title to the albums object
 				categoryJson.addProperty("categoryId", category.getId());
 				categoryJson.addProperty("categoryName", category.getCategory());
-				categorys.add(categoryJson);			
+				categoryJson.addProperty("categoryPath", category.getPathToRoot());
+				categoryJson.addProperty("categoryPathIds", category.getPathIdToRoot());
+				categorys.add(""+category.getId());			
 			});
 		});
 		

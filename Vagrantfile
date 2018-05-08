@@ -53,6 +53,8 @@ Vagrant.configure("2") do |config|
         auto_correct: true
       box.vm.network "forwarded_port", guest: 9200, host: 9200,       
         auto_correct: true    
+      box.vm.network "forwarded_port", guest: 5601, host: 5601,       
+        auto_correct: true      
       box.vm.host_name = "ubuntu-elasticsearch-test"
 
       box.vm.synced_folder "vagrant-scripts/build/", "/tmp/vagrant-scripts/build/"

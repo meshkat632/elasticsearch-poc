@@ -21,6 +21,8 @@ public class Category {
 	
 
 	private String category;
+	private Category parent;
+	
 
 	public String getCategory() {
 		return category;
@@ -62,11 +64,47 @@ public class Category {
 
 	public void addChild(Category childCategory) {		
 		childCategories.add(childCategory);
+		childCategory.setParent(this);
 		
+	}
+
+	private void setParent(Category parent) {
+		this.parent = parent;
+		
+	}
+	public Category getParent() {
+		return this.parent;		
 	}
 
 	public List<Category> getChildren() {		
 		return childCategories;
+	}
+	
+	private void getPathToRoot(Category category, StringBuilder pathToRoot) {
+		if(category == null) return;
+		pathToRoot.append("|"+category.getCategory());
+		if(this.parent != null) 
+			getPathToRoot(category.getParent(), pathToRoot);
+		
+	}
+	private void getPathIdToRoot(Category category, StringBuilder pathToRoot) {
+		if(category == null) return;
+		pathToRoot.append("|"+category.getId());
+		if(this.parent != null) 
+			getPathIdToRoot(category.getParent(), pathToRoot);
+		
+	}
+
+	public String getPathToRoot() {
+		StringBuilder ret = new StringBuilder();
+		getPathToRoot(this, ret);
+		return ret.toString();
+	}
+
+	public String getPathIdToRoot() {
+		StringBuilder ret = new StringBuilder();
+		getPathIdToRoot(this, ret);
+		return ret.toString();
 	}
 
 }

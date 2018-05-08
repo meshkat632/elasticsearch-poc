@@ -40,7 +40,7 @@ async function readAndInsertSmartTvs () {
 function parseSmartTVFile (filePath) {
     // Read json file
     var smarttv = JSON.parse(fs.readFileSync(filePath, 'utf8'));    
-    let { currentprice, id, modelname,modelnumber,brand, productname, shortlabel:shortlabel, longdescription:longdescription, manufacturerimage, displayname, customerrating, ean, seoUrl } = smarttv;
+    let { categories, currentprice, id, modelname,modelnumber,brand, productname, shortlabel:shortlabel, longdescription:longdescription, manufacturerimage, displayname, customerrating, ean, seoUrl } = smarttv;
 
     const ret = {
       "id": id, 
@@ -54,6 +54,7 @@ function parseSmartTVFile (filePath) {
       "customerrating": customerrating,
       "ean":ean,
       "seoUrl": seoUrl,
+      "categories": categories,
       "currentprice": parseFloat(currentprice),
       "text": JSON.stringify(smarttv)
     };

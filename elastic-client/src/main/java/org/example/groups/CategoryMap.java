@@ -30,9 +30,10 @@ public class CategoryMap {
 		
 		Optional<CategoryMap> categoryMap = CategoryMap.buildFromFile(xmlFile);
 		categoryMap.ifPresent(item ->{
-			Optional<Category> found = item.getCategoryWithId("SaturnDEdec645526");
+			Optional<Category> found = item.getCategoryWithId("SaturnDEdec474973");
 			if(found.isPresent()) {
-				System.out.println(found.get().getCategory()+" "+found.get().getId());	
+				Category category = found.get();				
+				System.out.println(category.getCategory()+" "+category.getId()+" path:"+ category.getPathToRoot());	
 			}			
 		});
 		

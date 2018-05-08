@@ -75,7 +75,17 @@ async function putMappingForSmartTV() {
       "shortlabel":{ type: 'keyword' }      ,       
       "displayname":{ type: 'keyword' }      ,      
       "ean":{ type: 'keyword' } ,      
-      "currentprice":{ type: 'float' }, 
+      "currentprice":{ type: 'float' },       
+      /*
+      "categories":{ 
+        "properties": {
+          "categoryName": { type: 'text'},
+          "categoryId": { type: 'keyword'},
+          "categoryPathIds": { type: 'text'},
+          "categoryPath": { type: 'text'},
+        }
+      }, 
+      */
       "text": { type: 'text' } 
     };
   
