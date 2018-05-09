@@ -62,3 +62,55 @@ buttons {
    content: "\2605";
    position: absolute;
 }
+
+.custom-slider.rzslider .rz-bar {
+  background:lightgrey;
+  height: 2px;
+}
+.custom-slider.rzslider .rz-selection {
+  background: gray;
+}
+
+.custom-slider.rzslider .rz-pointer {
+  width: 8px;
+  height: 16px;
+  /*
+  top: auto; 
+  bottom: -1;
+  */
+  top: auto; 
+  bottom: 0;
+  background-color:gray;
+  
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  
+}
+
+.custom-slider.rzslider .rz-pointer:after {
+  display: none;
+}
+
+.custom-slider.rzslider .rz-bubble {
+  bottom: 14px;
+}
+
+.custom-slider.rzslider .rz-limit {
+  font-weight: bold;
+  color: lightgrey;
+}
+
+.custom-slider.rzslider .rz-tick {
+  width: 1px;
+  height: 10px;
+  margin-left: 4px;
+  border-radius: 0;
+  background: #ffe4d1;
+  top: -1px;
+}
+
+.custom-slider.rzslider .rz-tick.rz-selected {
+  background: lightgray;
+}
