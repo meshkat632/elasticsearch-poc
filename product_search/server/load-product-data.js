@@ -51,7 +51,7 @@ function parseSmartTVFile (filePath) {
       "shortlabel":shortlabel,       
       "manufacturerimage": manufacturerimage,
       "displayname":displayname,
-      "customerrating": customerrating,
+      "customerrating": parseFloat(customerrating),
       "ean":ean,
       "seoUrl": seoUrl,
       "categories": categories,

@@ -17,6 +17,7 @@
     <script src="//cdn.muicss.com/mui-0.9.39/angular/mui-angular.min.js"></script>
     <link href="static/style.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.rawgit.com/BioPhoton/angular1-star-rating/v1.2.4/dist/index.js"></script>
 
     <script>
         const baseUrl = 'http://localhost:3000';
@@ -48,12 +49,50 @@
             return json;
         }
 
+        async function getCustomerRatingFacet() {
 
-        async function getByBrands(keyword, offset, brands) {
+            const elasticBaseUrl = 'http://localhost:9200';
+
+            var elasticQuery = {
+                "size": 0,
+                "query": {
+                    "match_all": {}
+                },
+                "aggregations": {
+                    "customerrating_ranges": {
+                        "range": {
+                            "field": "customerrating",
+                            "ranges": [
+                                { "from": 1, "to": 5.0 },
+                                { "from": 2.0, "to": 5.0 },
+                                { "from": 3.0, "to": 5.0 },
+                                { "from": 4.0, "to": 5.0 },
+                                { "from": 5.0, "to": 6.0 }
+                            ]
+                        }
+                    }
+                }
+            };
+
+
+            let json = await axios.post(elasticBaseUrl + "/smart-tv/_search", elasticQuery);
+            return json;
+        }
+
+
+        /*
+
+        
+
+        */
+
+
+        async function getByBrands(keyword, offset, brands, rating) {
 
             console.log("keyword", keyword);
             console.log("offset", offset);
             console.log("brands", brands);
+            console.log("rating", rating);
             const elasticBaseUrl = 'http://localhost:9200';
 
             var elasticQueryTemplate = {
@@ -63,35 +102,61 @@
                         "must": {
                             "match_all": {}
                         },
-                        "filter": {
-                            "terms": { "brand": brands.map(item => item.key) }
-                        }
+                        "filter": [
+                            /*
+                            {
+                                "terms": { "brand": brands.map(item => item.key) }
+                            },
+                            {
+                                "range": {
+                                    "customerrating": {
+                                        "gte": 2
+                                    }
+                                }
+                            }
+                            */
+                        ]
                     }
                 },
                 "aggregations": {
                     "by_brand": {
                         "terms": {
                             "field": "brand",
-                            "size": 20
+                            "size": 5
                         }
                     }
                 }
             };
 
-            if (!(keyword === null || keyword === "")) {                
-                elasticQueryTemplate.query.bool.must = {                    
+            if (!(keyword === null || keyword === "")) {
+                elasticQueryTemplate.query.bool.must = {
                     "match": {
                         "text": keyword
-                    }                
-                };                
+                    }
+                };
             }
 
-            if (brands.length == 0) {                
-                delete elasticQueryTemplate.query.bool.filter;
+            if (brands.length !== 0) {
+                elasticQueryTemplate.query.bool.filter.push({
+                    "terms": { "brand": brands.map(item => item.key) }
+                });
+                //delete elasticQueryTemplate.query.bool.filter;
             }
- 
 
-            console.log("query dsl:"+JSON.stringify(elasticQueryTemplate));
+            if (rating !== null) {
+                elasticQueryTemplate.query.bool.filter.push({
+                    "range": {
+                        "customerrating": {
+                            "gte": rating,
+                            "lte": 6
+                        }
+                    }
+                });
+            }
+            
+
+
+            console.log("query dsl:" + JSON.stringify(elasticQueryTemplate));
             let json = await axios.post(elasticBaseUrl + "/smart-tv/_search", elasticQueryTemplate);
             return json;
         }
@@ -109,11 +174,60 @@
 
 
 
-        angular.module('checkboxExample', []).controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {
+        angular.module('checkboxExample', ['star-rating']).controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {
 
             $scope.sortingOrder = "desc";//"desc"
 
             $scope.selectedBrands = [];
+            $scope.selectedRating = null;
+
+            /*
+
+                    { "from": 1, "to": 5.0 },
+                    { "from": 2.0, "to": 5.0 },
+                    { "from": 3.0, "to": 5.0 },
+                    { "from": 4.0, "to": 5.0 },
+                    { "from": 5.0, "to": 6.0 }
+
+            */
+
+            $scope.ratings =[ 
+                {
+                    "id": "12341",
+                    "value": 1,
+                    "doc_count" : 0,
+                    "selected": false
+                },
+                {
+                    "id": "12342",
+                    "value": 2,
+                    "doc_count" : 0,
+                    "selected": false
+                },
+                {
+                    "id": "12343",
+                    "value": 3,
+                    "doc_count" : 0,
+                    "selected": false
+                },
+                {
+                    "id": "12344",
+                    "value": 4,
+                    "doc_count" : 0,
+                    "selected": false
+                },
+                {
+                    "id": "12344",
+                    "value": 5,
+                    "doc_count" : 0,
+                    "selected": false
+                }
+            ];
+            
+            $scope.selectedRating = {
+                from: null
+            };
+            
 
             $scope.getBrandWithName = function (brandName) {
                 console.log("getBrandWithName", brandName, $scope.brands.filter(item => item.key === brandName));
@@ -121,12 +235,20 @@
                 return $scope.brands.filter(item => item.key === brandName)[0];
             }
 
-                               
+
             $scope.newSearch = function () {
                 console.log("newSearch");
-                $scope.searchOffset = 0;                
+                $scope.searchOffset = 0;
                 $scope.search();
 
+            }
+
+            $scope.toggleRatingSelection = function (rating) {
+                console.log("toggleRatingSelection", rating);
+                
+                $scope.searchOffset = 0;
+                $scope.search();
+                
             }
 
             $scope.toggleSelection = function (_selectedBrand) {
@@ -146,14 +268,14 @@
 
             $scope.search = function () {
 
-                getByBrands($scope.searchKey, $scope.searchOffset, $scope.selectedBrands).then(function (response) {
+                getByBrands($scope.searchKey, $scope.searchOffset, $scope.selectedBrands, $scope.selectedRating.from).then(function (response) {
                     console.log("response", response);
                     $scope.numHits = response.data.hits.total;
                     $scope.searchResults = response.data.hits.hits;
-                    
-                    if ($scope.selectedBrands.length === 0){
+
+                    if ($scope.selectedBrands.length === 0) {
                         $scope.brands = response.data.aggregations.by_brand.buckets;
-                    }else {
+                    } else {
                         /*
                         $scope.brands.forEach(brand => {
                             brand.doc_count = 0;
@@ -167,9 +289,9 @@
                                     }
                                 });
                             });                                
-                        */    
+                        */
 
-                        
+
                     }
                     /*
                     if(response.data.aggregations.by_brand.buckets.length === 0 && $scope.selectedBrands.length !== 0){
@@ -177,7 +299,7 @@
                     }
                     */
                     //
-                        
+
                     $scope.$apply();
                 });
 
@@ -200,6 +322,19 @@
             $scope.searchResults = [];
             $scope.search();
 
+
+            getCustomerRatingFacet().then(function (response) {                
+                $scope.customerrating_ranges = response.data.aggregations.customerrating_ranges.buckets;
+                $scope.ratings.forEach(item =>{                
+                    $scope.customerrating_ranges.forEach(customerrating => {
+                        if(customerrating.from === item.value){
+                            item.doc_count = customerrating.doc_count;                            
+                        }                        
+                    });
+                });
+                $scope.$apply();
+            });
+
         }]);
     </script>
 </head>
@@ -218,8 +353,6 @@
                 <div class="mui--text-black-54 mui--text-body2">
                     Brands
                 </div>
-
-
                 <div class="mui-divider"></div>
 
                 <div class="mui--text-black-54">
@@ -235,63 +368,103 @@
                     </div>
                 </div>
 
+                <div class="mui--text-black-54 mui--text-body2">
+                    Ratings
+                </div>
+
+
                 <!--
                 <div class="mui-divider"></div>
-                <div class="mui--text-black-54 mui--text-body2">                    
-                    {{selectedBrands}}
-                    <div ng-repeat="selectedBrand in selectedBrands">
-                            <button class="btn" ng-click="toggleSelection(getBrandWithName(selectedBrand.key))">{{selectedBrand.key}} <i class="fa fa-close"></i></button>                            
-                        </div>
-                </div>
-            -->
 
-            </div>
-        </div>
-    </div>
-
-
-    <div id="content" class="mui-container-fluid">
-        <div class="mui-row">
-            <div class="mui-col-sm-10 mui-col-sm-offset-1">
-                <br>
-                <br>
-                <div class="mui-panel pagination-panel">
-                    <div class="mui-container-fluid">
-                        <div class="mui-row">
-                            <div class="mui-col-md-8">
-                                <div class="mui--text-headline">
-                                    Results for '{{searchKey}}'
-                                </div>
-                                <div class="mui--text-subhead">{{ numHits }} Hits. Displaying Results {{ searchOffset }} - {{ searchOffset + 9 }} </div>
+                <div class="mui--text-black-54">
+                    <div class="mui-row" ng-repeat="customerrating in customerrating_ranges">
+                            <div class="mui-col-md-2">
+                                <input style="margin-top: 6px" ng-model="selectedRating" type="radio" ng-click="toggleRatingSelection(customerrating)" />
                             </div>
                             <div class="mui-col-md-4">
-                                <div class="mui-row">
-                                    <button class="mui-btn mui-btn--flat" ng-click="prevResultsPage()">Prev Page</button>
-                                    <button class="mui-btn mui-btn--flat" ng-click="nextResultsPage()">Next Page</button>
+                                <star-rating-comp space="'around'" star-type="'icon'" direction="'ltr'" read-only="true" static-color="'default'" rating=customerrating.from
+                                    label-position="'left'"></star-rating-comp><span></span>
+                            </div>
+                            <div class="mui-col-md-2" style="padding-top: 2px">
+                                <b> {{customerrating.doc_count}}</b>
+                            </div>
+                        </div>    
+                    </div>                
+                </div>
+
+                {{selectedRating}}
+            -->
+                <div class="mui-divider"></div>
+                <form name="myForm" class="mui--text-black-54">
+                        <div class="mui-row" ng-repeat="rating in ratings">
+                                <div class="mui-col-md-2">
+                                        <input style="margin-top: 6px"  type="radio" name="selectedRatingRadioGroup" value="{{rating.value}}" ng-model="selectedRating.from" ng-change="toggleRatingSelection(rating)">
+                                </div>
+                                <div class="mui-col-md-4">
+                                        <star-rating-comp space="'around'" star-type="'icon'" direction="'ltr'" read-only="true" static-color="'default'" rating=rating.value
+                                        label-position="'left'"></star-rating-comp>
+                                </div>
+                                <div class="mui-col-md-4" style="padding-top: 2px; padding-left: 20px">
+                                        <b> {{rating.doc_count}}</b>
+                                </div>                           
+                        </div>                                     
+                        <!--            
+                        <tt>selectedRating = {{selectedRating | json}}</tt><br/>
+                        -->
+                        
+                </form>
+            
+            </div>
+            
+
+
+            </div>    
+        </div>
+    </div> 
+
+
+        <div id="content" class="mui-container-fluid">
+            <div class="mui-row">
+                <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                    <br>
+                    <br>
+                    <div class="mui-panel pagination-panel">
+                        <div class="mui-container-fluid">
+                            <div class="mui-row">
+                                <div class="mui-col-md-8">
+                                    <div class="mui--text-headline">
+                                        Results for '{{searchKey}}'
+                                    </div>
+                                    <div class="mui--text-subhead">{{ numHits }} Hits. Displaying Results {{ searchOffset }} - {{ searchOffset + 9 }} </div>
+                                </div>
+                                <div class="mui-col-md-4">
+                                    <div class="mui-row">
+                                        <button class="mui-btn mui-btn--flat" ng-click="prevResultsPage()">Prev Page</button>
+                                        <button class="mui-btn mui-btn--flat" ng-click="nextResultsPage()">Next Page</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mui-panel" ng-repeat="hit in searchResults">
-                    <div class="mui--text-subhead"><img src="{{hit._source.manufacturerimage}}" alt="{{hit._source.brand}}"></div>
-                    <div class="mui--text-title" v-html="hit._source.displayname"></div>
-                    <div class="mui-divider"></div>
-                    <div class="mui--text-subhead"> {{ hit._source.shortlabel}}</div>
-                    <div class="mui--text-subhead">currentprice:<b>{{ hit._source.currentprice }}</b></div>
-                    <div class="mui--text-subhead">brand:<b>{{ hit._source.brand }}</b></div>
-                    <div class="mui--text-subhead">modelnumber:<b>{{ hit._source.modelnumber }}</b></div>
-                    <div class="mui--text-subhead">modelname:<b>{{ hit._source.modelname }}</b></div>
-                    <div class="mui--text-subhead">id:<b>{{ hit._source.id }}</b></div>
-                    <div class="mui--text-subhead">link:
-                        <a v-bind:href="''+hit._source.seoUrl+''">{{ hit._source.seoUrl }}</a>
-                    </div>
-                    <div class="mui--text-subhead">customerrating:<b>{{ hit._source.customerrating }}</b></div>
+                    <div class="mui-panel" ng-repeat="hit in searchResults">
+                        <div class="mui--text-subhead"><img src="{{hit._source.manufacturerimage}}" alt="{{hit._source.brand}}"></div>
+                        <div class="mui--text-title" v-html="hit._source.displayname"></div>
+                        <div class="mui-divider"></div>
+                        <div class="mui--text-subhead"> {{ hit._source.shortlabel}}</div>
+                        <div class="mui--text-subhead">currentprice:<b>{{ hit._source.currentprice }}</b></div>
+                            <div class="mui--text-subhead">brand:<b>{{ hit._source.brand }}</b></div>
+                            <div class="mui--text-subhead">modelnumber:<b>{{ hit._source.modelnumber }}</b></div>
+                            <div class="mui--text-subhead">modelname:<b>{{ hit._source.modelname }}</b></div>
+                            <div class="mui--text-subhead">id:<b>{{ hit._source.id }}</b></div>
+                            <div class="mui--text-subhead">link:
+                                <a v-bind:href="''+hit._source.seoUrl+''">{{ hit._source.seoUrl }}</a>
+                            </div>
+                            <div class="mui--text-subhead">customerrating:<b>{{ hit._source.customerrating }}</b></div>
+                        </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
 
 </html>

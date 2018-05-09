@@ -1,6 +1,7 @@
 package org.example.groups;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -105,6 +106,20 @@ public class Category {
 		StringBuilder ret = new StringBuilder();
 		getPathIdToRoot(this, ret);
 		return ret.toString();
+	}
+	
+	private void getRootCategoris(Category category, List<String> rootCatPath) {
+		if(category == null) return;
+		if(!rootCatPath.contains(category.getId()+":"+category.getCategory()))
+			rootCatPath.add(category.getId()+":"+category.getCategory());		
+		if(this.parent != null) 
+			getRootCategoris(category.getParent(), rootCatPath);
+	}
+
+	public List<String> getRootCategoris() {
+		List<String> ret = new ArrayList<>();
+		getRootCategoris(this, ret);
+		return ret;
 	}
 
 }

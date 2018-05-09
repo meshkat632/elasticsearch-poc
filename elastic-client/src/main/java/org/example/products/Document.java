@@ -101,8 +101,9 @@ public class Document {
 		map.put("collection", this.collection);
 		map.put("id", this.id);
 		
+		List<String> rootCategoris = new ArrayList<>();
 		
-		JsonArray categorys = new JsonArray();
+		JsonArray categoris = new JsonArray();
 		
 		Arrays.asList(this.categoryids.split(" ")).stream().forEach(categoryid -> {
 			categoryMappings.getCategoryWithId(categoryid).ifPresent(category ->{
@@ -113,11 +114,16 @@ public class Document {
 				categoryJson.addProperty("categoryName", category.getCategory());
 				categoryJson.addProperty("categoryPath", category.getPathToRoot());
 				categoryJson.addProperty("categoryPathIds", category.getPathIdToRoot());
-				categorys.add(""+category.getId());			
+				rootCategoris.addAll(category.getRootCategoris());
+				if(!rootCategoris.contains(""+category.getId()+":"+category.getCategory()))
+					rootCategoris.add(""+category.getId()+":"+category.getCategory());			
 			});
-		});
+		});		
 		
-		map.put("categories", categorys);		
+		rootCategoris.forEach(item -> {	
+			categoris.add(item);			
+		});
+		map.put("categories", categoris);		
 		return gson.toJson(map);		
 	}
 
