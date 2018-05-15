@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.google.gson.Gson;
+
 @XmlRootElement(name = "category")
 public class Category {
 
@@ -18,6 +20,11 @@ public class Category {
 	@Override
 	public String toString() {
 		return "Category [id=" + id + ", category=" + category + " childCategories:"+childCategories+"]";
+	}
+	
+	
+	public String toJson() {		
+		return "{ \"id\":\""+ id + "\", \"category\": \""+ category + "\", \"childCategoriesCount\": "+childCategories.size()+"}";
 	}
 	
 

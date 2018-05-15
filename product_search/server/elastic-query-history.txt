@@ -76,6 +76,100 @@ GET smart-tv/_search
 }
 
 
+GET smart-tv/_search
+{
+  "query": {
+    "bool": {
+       "must": { "match": {
+         "text": "oled"
+       } },
+        "filter" : {
+                "terms" : { "brand" : ["SONY", "SAMSUNG"]}
+            }
+    }
+  }
+}
+
+   "constant_score" : {
+            "filter" : {
+                "terms" : { 
+                    "brand" : ["SONY", "SAMSUNG"]
+                }
+            }
+        }
 
 
 
+GET smart-tv
+POST smart-tv/_analyze
+{
+  "tokenizer": "my_tokenizer",
+  "text": "|Audiokabel|TV-Zubehör|TV, Heimkino & Zubehör|TV + Audio|PRODUCTS#PIM"
+}
+DELETE smart-tv
+PUT smart-tv
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "my_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "path_hierarchy",
+          "delimiter": "|",
+          "replacement": "/",
+          "reverse": true
+        }
+      }
+    }
+  }
+}
+
+GET smart-tv
+POST smart-tv/_analyze
+{
+  "tokenizer": "my_tokenizer",
+  "text": "|Audiokabel|TV-Zubehör|TV, Heimkino & Zubehör|TV + Audio|PRODUCTS#PIM"
+}
+DELETE smart-tv
+PUT smart-tv
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "my_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "path_hierarchy",
+          "delimiter": "|",
+          "replacement": "/",
+          "reverse": true
+        }
+      }
+    }
+  }
+}
+
+GET /smart-tv/_search
+{
+    "query" : {
+        "term" : { "categories" : "Smart TV/Fernseher/TV, Heimkino & Zubehör/TV + Audio/PRODUCTS#PIM" }
+    }
+}
+
+GET /_search?q=categories:TV + Audio/PRODUCTS#PIM
+
+GET /smart-tv/_search
+{
+    "query" : {
+        "match": {
+          "text": "Fernseher/TV, Heimkino & Zubehör/TV + Audio/PRODUCTS#PIM"
+        }
+    }
+}

@@ -114,9 +114,11 @@ public class Document {
 				categoryJson.addProperty("categoryName", category.getCategory());
 				categoryJson.addProperty("categoryPath", category.getPathToRoot());
 				categoryJson.addProperty("categoryPathIds", category.getPathIdToRoot());
-				rootCategoris.addAll(category.getRootCategoris());
+				rootCategoris.add(category.getPathToRoot());
+				/*
 				if(!rootCategoris.contains(""+category.getId()+":"+category.getCategory()))
-					rootCategoris.add(""+category.getId()+":"+category.getCategory());			
+					rootCategoris.add(""+category.getId()+":"+category.getCategory());
+				*/				
 			});
 		});		
 		

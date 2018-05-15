@@ -25,11 +25,49 @@ async function checkConnection () {
 
 /** Clear the index, recreate it, and add mappings */
 async function resetIndex () {
-    if (await client.indices.exists({ index })) {
-      await client.indices.delete({ index })
+
+  const settings = {
+    "settings": {
+      "analysis": {
+        "analyzer": {
+          "my_analyzer": {
+            "tokenizer": "my_tokenizer"
+          }
+        },
+        "tokenizer": {
+          "my_tokenizer": {
+            "type": "path_hierarchy",
+            "delimiter": "|",
+            "replacement": "/",
+            "reverse": true
+          }
+        }
+      }
     }
+  };
+  if (await client.indices.exists({ index })) {
+    await client.indices.delete({ index })
+  }
+
+  /*
   
-    await client.indices.create({ index })
+  await client.indices.create({ index }).then(
+    function(){
+      await client.indices.putSettings({ index, ignoreUnavailable:true,  body: settings })
+    }
+  );
+  */
+
+  
+  
+    
+  
+    await client.indices.create({ index }) 
+     
+    
+    await client.indices.close({ index })
+    await client.indices.putSettings({ index, body: settings })
+    await client.indices.open({ index })
     await putMappingForSmartTV()
   }
 
@@ -77,19 +115,13 @@ async function putMappingForSmartTV() {
       "ean":{ type: 'keyword' } ,      
       "currentprice":{ type: 'float' },       
       "customerrating":{ type: 'float' },             
-      /*
       "categories":{ 
-        "properties": {
-          "categoryName": { type: 'text'},
-          "categoryId": { type: 'keyword'},
-          "categoryPathIds": { type: 'text'},
-          "categoryPath": { type: 'text'},
-        }
-      }, 
-      */
+        "type": 'text',
+        "analyzer": "my_analyzer"
+      },       
       "text": { type: 'text' } 
     };
-  
+     
     return client.indices.putMapping({ index, type, body: { properties: schema } })
   }
 
