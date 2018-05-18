@@ -122,11 +122,47 @@ public class Category {
 		if(this.parent != null) 
 			getRootCategoris(category.getParent(), rootCatPath);
 	}
+	
+	private void getRootCategoris2(Category category, List<String> rootCatPath) {
+		if(category == null) return;
+		if(!rootCatPath.contains(category.getCategory()))
+			rootCatPath.add(category.getCategory());		
+		if(this.parent != null) 
+			getRootCategoris2(category.getParent(), rootCatPath);
+	}
 
 	public List<String> getRootCategoris() {
 		List<String> ret = new ArrayList<>();
 		getRootCategoris(this, ret);
 		return ret;
 	}
+	
+
+	public List<String> getRootCategoris2() {
+		List<String> ret = new ArrayList<>();
+		List<String> result = new ArrayList<>();
+		getRootCategoris2(this, ret);
+		while(!ret.isEmpty()) {			
+			//System.out.println(ret+" "+convertToPath(ret));
+			result.add(convertToPath(ret));
+			ret.remove(0);
+		}
+		/*
+		ret.forEach(item ->{
+			ret.stream().filter(item2 -> )
+		});
+		*/
+		return result;
+	}
+
+
+	private String convertToPath(List<String> paths) {
+		StringBuilder ret = new StringBuilder(); 
+		paths.forEach(item ->{
+			ret.append("|"+item);
+		});
+		return ret.toString();
+	}
+
 
 }

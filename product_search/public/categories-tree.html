@@ -26,38 +26,127 @@
     <link rel="stylesheet" type="text/css" href="angular.treeview/css/angular.treeview.css">
 
     <script>
-        async function getCategoryTree() {        
+        async function getCategoryTreeCount() {
+
+            const elasticBaseUrl = 'http://localhost:9200';
+
+            var elasticQuery = {
+                "size": 0,
+                "query": {
+                    "match_all": {}
+                },
+                "aggregations": {
+                    "by_category_name": {
+                        "nested": {
+                            "path": "category_list"
+                        },
+                        "aggs": {
+                            "by_category": {
+                                "terms": {
+                                    "field": "category_list.categoryName",
+                                    "size": 2000
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+
+            let json = await axios.post(elasticBaseUrl + "/smart-tv/_search", elasticQuery);
+            return json;
+        }
+
+        async function getCategoryTree() {
 
             let json = await axios.get("/data/groups.json");
             return json;
         }
 
+        /*
+        {
+  "size": 0,
+  "query": {
+    "match_all": {}
+  },
+  "aggregations": {
+    "by_category_name": {
+      "nested": {
+        "path": "category_list"
+      },
+      "aggs": {
+        "by_brand": {
+          "terms": {
+            "field": "category_list.categoryName",
+            "size": 2000
+          }
+        }
+      }
+    }
+  }
+}
+        */
 
-        angular.module('checkboxExample', ['star-rating', 'rzModule', 'angularTreeview']).controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {                      
+
+        angular.module('checkboxExample', ['star-rating', 'rzModule', 'angularTreeview']).controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {
             $scope.treedata = [];
+
+            $scope.visiteTree = function (node) {
+                console.log("node Name:" + node.label+ ":" +$scope.categoryCountMap[""+node.label]);
+                if($scope.categoryCountMap[""+node.label] !== undefined){
+                    node.label = node.label + "-"+ parseInt($scope.categoryCountMap[""+node.label]);
+                };
+                //console.log("node Name:" + node.label + ":");
+
+                if (node.children) {
+                    node.children.forEach(function (child) {
+                        $scope.visiteTree(child)
+                    });
+                }
+
+            };
+
+
+
             getCategoryTree().then(function (response) {
-                console.log(response.data);
-                $scope.treedata = [response.data];                
-                $scope.$apply();
-            });            
+                console.log("getCategoryTree:", response.data);
+                $scope.treedata = [response.data];
+
+                getCategoryTreeCount().then(function (response) {
+                    console.log("getCategoryTreeCount:", response.data.aggregations.by_category_name.by_category.buckets);
+                    $scope.categoryCountData = response.data.aggregations.by_category_name.by_category.buckets;
+                    $scope.categoryCountMap = {};
+                    $scope.categoryCountData.forEach(function (categoryCount) {
+                        console.log("categoryCount:", categoryCount);
+                        $scope.categoryCountMap[""+categoryCount.key] = categoryCount.doc_count;
+                    });
+                    console.log($scope.categoryCountMap);
+                    
+                    $scope.treedata.forEach(function (treedata) {
+                        console.log("treedata:", treedata);
+                        $scope.visiteTree(treedata);
+                    });                    
+
+                    $scope.$apply();
+                });
+
+                
+            });
+
+
         }]);
     </script>
 </head>
 
 <body ng-app="checkboxExample" ng-controller="ExampleController">
 
-        <div
-        data-angular-treeview="true"
-        data-tree-id="abc"
-        data-tree-model="treedata"
-        data-node-id="id"
-        data-node-label="label"
-        data-node-children="children" >
+    <div data-angular-treeview="true" data-tree-id="abc" data-tree-model="treedata" data-node-id="id" data-node-label="label"
+        data-node-children="children">
     </div>
 
-         
 
-    
+
+
 </body>
 
 </html>

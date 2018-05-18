@@ -8,7 +8,7 @@ const host = process.env.ES_HOST || 'localhost'
 const client = new elasticsearch.Client({ host: { host, port } })
 
 /** Check the ES connection status */
-async function checkConnection () {
+async function checkConnection() {
   let isConnected = false
   while (!isConnected) {
     console.log('Connecting to ES')
@@ -24,7 +24,7 @@ async function checkConnection () {
 
 
 /** Clear the index, recreate it, and add mappings */
-async function resetIndex () {
+async function resetIndex() {
 
   const settings = {
     "settings": {
@@ -58,20 +58,20 @@ async function resetIndex () {
   );
   */
 
-  
-  
-    
-  
-    await client.indices.create({ index }) 
-     
-    
-    await client.indices.close({ index })
-    await client.indices.putSettings({ index, body: settings })
-    await client.indices.open({ index })
-    await putMappingForSmartTV()
-  }
 
-  /** Add book section schema mapping to ES */
+
+
+
+  await client.indices.create({ index })
+
+
+  await client.indices.close({ index })
+  await client.indices.putSettings({ index, body: settings })
+  await client.indices.open({ index })
+  await putMappingForSmartTV()
+}
+
+/** Add book section schema mapping to ES */
 async function putMappingForSmartTV() {
 
   /*
@@ -98,33 +98,39 @@ async function putMappingForSmartTV() {
       
     }
     */
-    /*
-    const schema = {
-      brand: { type: 'text' }      
-    }
-    */
-
-    const schema = {
-      "id": { type: 'keyword' }      , 
-      "modelname":{ type: 'keyword' }      ,
-      "modelnumber": { type: 'keyword' }      ,
-      "brand": { type: 'keyword' }      , 
-      "productname" :{ type: 'keyword' }      , 
-      "shortlabel":{ type: 'keyword' }      ,       
-      "displayname":{ type: 'keyword' }      ,      
-      "ean":{ type: 'keyword' } ,      
-      "currentprice":{ type: 'float' },       
-      "customerrating":{ type: 'float' },             
-      "categories":{ 
-        "type": 'text',
-        "analyzer": "my_analyzer"
-      },       
-      "text": { type: 'text' } 
-    };
-     
-    return client.indices.putMapping({ index, type, body: { properties: schema } })
+  /*
+  const schema = {
+    brand: { type: 'text' }      
   }
+  */
 
-  module.exports = {
-    client, index, type, checkConnection, resetIndex
-  }
+  const schema = {
+    "id": { type: 'keyword' },
+    "modelname": { type: 'keyword' },
+    "modelnumber": { type: 'keyword' },
+    "brand": { type: 'keyword' },
+    "productname": { type: 'keyword' },
+    "shortlabel": { type: 'keyword' },
+    "displayname": { type: 'keyword' },
+    "ean": { type: 'keyword' },
+    "currentprice": { type: 'float' },
+    "customerrating": { type: 'float' },
+    "category_list": {
+      "type": "nested",
+      "properties": {        
+        "categoryName": { "type": "keyword" }        
+      }
+    },
+    "categories": {
+      "type": 'text',
+      "analyzer": "my_analyzer"
+    },
+    "text": { type: 'text' }
+  };
+
+  return client.indices.putMapping({ index, type, body: { properties: schema } })
+}
+
+module.exports = {
+  client, index, type, checkConnection, resetIndex
+}

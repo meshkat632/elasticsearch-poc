@@ -1,27 +1,3 @@
-/*
-	@license Angular Treeview version 0.1.6
-	ⓒ 2013 AHN JAE-HA http://github.com/eu81273/angular.treeview
-	License: MIT
-
-
-	[TREE attribute]
-	angular-treeview: the treeview directive
-	tree-id : each tree's unique id.
-	tree-model : the tree model on $scope.
-	node-id : each node's id
-	node-label : each node's label
-	node-children: each node's children
-
-	<div
-		data-angular-treeview="true"
-		data-tree-id="tree"
-		data-tree-model="roleList"
-		data-node-id="roleId"
-		data-node-label="roleName"
-		data-node-children="children" >
-	</div>
-*/
-
 (function ( angular ) {
 	'use strict';
 
@@ -41,6 +17,9 @@
 				//node label
 				var nodeLabel = attrs.nodeLabel || 'label';
 
+				//node label
+				var nodePayload = attrs.nodePayload || 'payload';
+
 				//children
 				var nodeChildren = attrs.nodeChildren || 'children';
 
@@ -51,7 +30,7 @@
 							'<i class="collapsed" data-ng-show="node.' + nodeChildren + '.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
 							'<i class="expanded" data-ng-show="node.' + nodeChildren + '.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
 							'<i class="normal" data-ng-hide="node.' + nodeChildren + '.length"></i> ' +
-							'<span data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}}</span>' +
+							'<span data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}} <b>{{node.' + nodePayload + '}}</b></span>' +
 							'<div data-ng-hide="node.collapsed" data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id=' + nodeId + ' data-node-label=' + nodeLabel + ' data-node-children=' + nodeChildren + '></div>' +
 						'</li>' +
 					'</ul>';

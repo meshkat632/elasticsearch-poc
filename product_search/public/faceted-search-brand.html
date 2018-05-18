@@ -21,8 +21,15 @@
     <script src="https://cdn.rawgit.com/BioPhoton/angular1-star-rating/v1.2.4/dist/index.js"></script>
     <script src="https://rawgit.com/rzajac/angularjs-slider/master/dist/rzslider.js"></script>
     <link rel="stylesheet" href="https://rawgit.com/rzajac/angularjs-slider/master/dist/rzslider.css" />
+    <script src="static/tree.js"></script>
+    
+    <script type="text/javascript" src="angular.treeview/angular.treeview.js"></script>
+    <link rel="stylesheet" type="text/css" href="angular.treeview/css/angular.treeview.css">
 
     <script>
+
+         
+
         const baseUrl = 'http://localhost:3000';
         async function getBrandFacet(keyword, offset) {
 
@@ -155,7 +162,21 @@
                         ]
                     }
                 },
+
                 "aggregations": {
+                    "by_category_name": {
+                        "nested": {
+                            "path": "category_list"
+                        },
+                        "aggs": {
+                            "by_category": {
+                                "terms": {
+                                    "field": "category_list.categoryName",
+                                    "size": 1000
+                                }
+                            }
+                        }
+                    },
                     "customerrating_ranges": {
                         "range": {
                             "field": "customerrating",
@@ -253,9 +274,21 @@
             return json;
         }
 
+        async function getCategoryTree() {
+            let json = await axios.get("/data/groups.json");
+            return json;
+        }
 
 
-        angular.module('checkboxExample', ['star-rating', 'rzModule']).controller('ExampleController', ['$scope', '$timeout', function ($scope, $timeout) {
+
+        angular.module('checkboxExample', ['star-rating', 'rzModule', 'angularTreeview']).controller('ExampleController', ['$scope', '$timeout','$window', function ($scope, $timeout, $window) {
+
+            console.log($window.Tree);
+            console.log($window.Node);
+            
+            $scope.categoryTree = new $window.Tree('root', 0);           
+
+            
 
             $scope.sortingOrder = "desc";//"desc"
 
@@ -330,7 +363,7 @@
                     noSwitching: true,
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
                         console.log("on change modelValue." + modelValue + " " + "highValue:" + highValue);
-                        $scope.priceSlider._ignore = false;                        
+                        $scope.priceSlider._ignore = false;
                         $scope.userAction = "price-range";
                         $scope.search();
                     }
@@ -382,12 +415,36 @@
             $scope.searchOffset = 0;
             $scope.searchKey = "";
 
+
+
+
+
+            $scope.categoryTree = {};
+            $scope.buildTree = function (path, doc_count) {
+                console.log("buildTree:", path, doc_count);
+                paths = path.split("|");
+                console.log(paths);
+                $scope.getNode(paths.slice(1, paths.length));
+            }
+
+            $scope.getNode = function (paths) {
+                console.log("getNode", paths);
+                if (paths.length === 1) {
+                    rootNode = paths[0];
+                    console.log("rootNode", rootNode);
+                }
+                else if (paths.length > 0) {
+                    node = paths[0];
+                    $scope.getNode(paths.slice(1, paths.length));
+                }
+            }
+
             $scope.search = function () {
-                if($scope.userAction === "brand-change"){
-                        $scope.priceSlider._ignore = true;      
-                        $scope.priceSlider.options.floor = 0;
-                        $scope.priceSlider.options.ceil = 100;                  
-                }                                        
+                if ($scope.userAction === "brand-change") {
+                    $scope.priceSlider._ignore = true;
+                    $scope.priceSlider.options.floor = 0;
+                    $scope.priceSlider.options.ceil = 100;
+                }
 
                 getByBrands($scope.searchKey, $scope.searchOffset, $scope.selectedBrands, $scope.selectedRating.from, $scope.priceSlider).then(function (response) {
                     console.log("response", response);
@@ -396,12 +453,37 @@
 
                     if ($scope.selectedBrands.length === 0) {
                         $scope.brands = response.data.aggregations.by_brand.buckets;
-                    } 
-                    if($scope.userAction === "brand-change"){
+                    }
+                    if ($scope.userAction === "brand-change") {
                         $scope.priceSlider.options.floor = Math.floor(response.data.aggregations.currentprice_stats.min);
                         $scope.priceSlider.options.ceil = Math.floor(response.data.aggregations.currentprice_stats.max);
-                    }                                        
+                    }
 
+
+                    console.log("getCategoryTreeCount:", response.data.aggregations.by_category_name.by_category.buckets);
+                    $scope.categoryCountData = response.data.aggregations.by_category_name.by_category.buckets;
+                    $scope.categoryCountMap = {};
+                    $scope.categoryTree = new $window.Tree('PRODUCTS#PIM', 0);
+
+                    $scope.categoryCountData.forEach(function (categoryCount) {
+                        console.log("categoryCount:", categoryCount);
+                        $scope.categoryCountMap["" + categoryCount.key] = categoryCount.doc_count;
+                        //$scope.buildTree(categoryCount.key, categoryCount.doc_count);
+                        categoryPaths = categoryCount.key.split("|");
+                        $scope.categoryTree.addPath(categoryPaths.slice(1, categoryPaths.length), categoryCount.doc_count);                        
+                    });
+                    console.log("$scope.categoryCountMap", $scope.categoryCountMap);
+                    $scope.categoryTree.print(); 
+                    /*        
+                    $scope.categoryTree.visitTree(function(node){
+                        console.log($scope.categoryCountMap);                         
+                        console.log('node',node, $scope.categoryCountMap["|"+node.data]);                         
+                    });                    
+                    */
+
+                    console.log($scope.categoryTree);
+
+                    $scope.treedata =
                     $scope.$apply();
                 });
 
@@ -424,18 +506,31 @@
             $scope.searchResults = [];
             $scope.search();
 
-
-            getCustomerRatingFacet().then(function (response) {
-                $scope.customerrating_ranges = response.data.aggregations.customerrating_ranges.buckets;
-                $scope.ratings.forEach(item => {
-                    $scope.customerrating_ranges.forEach(customerrating => {
-                        if (customerrating.from === item.value) {
-                            item.doc_count = customerrating.doc_count;
-                        }
+            getCategoryTree().then(function (response) {
+                console.log("getCategoryTree:", response.data);
+                $scope.treedata = [response.data];
+                getCustomerRatingFacet().then(function (response) {
+                    $scope.customerrating_ranges = response.data.aggregations.customerrating_ranges.buckets;
+                    $scope.ratings.forEach(item => {
+                        $scope.customerrating_ranges.forEach(customerrating => {
+                            if (customerrating.from === item.value) {
+                                item.doc_count = customerrating.doc_count;
+                            }
+                        });
                     });
+                    $scope.$apply();
                 });
-                $scope.$apply();
+
             });
+
+
+            
+
+            
+           
+
+
+
 
             /*
             getPriceRangeFacet().then(function (response) {
@@ -458,15 +553,39 @@
     <div id="sidebar">
         <div class="mui-row">
             <div class="mui-col-sm-10 mui-col-sm-offset-1">
-                <div class="mui--text-black-54 mui--text-body2">Key Word: {{searchKey}}</div>
-                <div class="mui-divider"></div>
+                <div class="mui--text-black-54 mui--text-body2">
+                    <h1>Key Word</h1> {{searchKey}}</div>
+
                 <div class="mui--text-black-54">
                     <input type="text" ng-model="searchKey" ng-model-options="{ debounce: 500 }" ng-change="newSearch()">
                 </div>
 
 
                 <div class="mui--text-black-54 mui--text-body2">
-                    Brands
+                    <h1>Categories</h1>
+                </div>
+                <div class="mui-divider"></div>
+
+                <div class="mui--text-black-54">
+                    <div data-angular-treeview="true" data-tree-id="abc" data-tree-model="categoryTree" data-node-id="id" data-node-label="data" data-node-payload="payload"
+                        data-node-children="children">
+                    </div>
+                    
+                    <!--
+                    <div ng-repeat="category in categoryCountData">                        
+                        <div class="action-checkbox">                            
+                            <label for="{{category.key}}"></label> {{category.key}} <b>{{category.doc_count}}</b>
+                        </div>
+                    </div>
+                    -->
+                </div>
+
+
+
+
+
+                <div class="mui--text-black-54 mui--text-body2">
+                    <h1>Brands</h1>
                 </div>
                 <div class="mui-divider"></div>
 
@@ -484,7 +603,7 @@
                 </div>
 
                 <div class="mui--text-black-54 mui--text-body2">
-                    Ratings
+                    <h1>Ratings</h1>
                 </div>
 
                 <div class="mui-divider"></div>
@@ -508,7 +627,7 @@
 
                 </form>
                 <div class="mui--text-black-54 mui--text-body2">
-                    <p>Price</p>
+                    <h1>Price</h1>
                 </div>
                 <div class="mui-divider"></div>
                 <rzslider class="custom-slider" rz-slider-model="priceSlider.minValue" rz-slider-high="priceSlider.maxValue" rz-slider-options="priceSlider.options"></rzslider>

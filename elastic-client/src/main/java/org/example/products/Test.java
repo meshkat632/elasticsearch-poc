@@ -68,7 +68,7 @@ public class Test {
 						List<String> rootPath = document.isOfCategory(rootCat.get(), categoryMappings);
 						if (rootPath.size()> 0) {
 							System.out.println("rootPath:"+rootPath);
-							writeToFile(document.toIndexable(categoryMappings), "tv-heimkino-zubehör-"+document.getId());
+							writeToFile(document.toIndexable(categoryMappings), "tv-heimkino-zubehr-"+document.getId());
 							/*
 							try {
 								Thread.sleep(1000);
@@ -76,7 +76,8 @@ public class Test {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							*/	
+							*/
+								
 						}						
 					}
 					

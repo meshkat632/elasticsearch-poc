@@ -101,19 +101,32 @@ public class Document {
 		map.put("collection", this.collection);
 		map.put("id", this.id);
 		
+		
+		JsonArray categoryList = new JsonArray();
+		
 		List<String> rootCategoris = new ArrayList<>();
 		
-		JsonArray categoris = new JsonArray();
+		
 		
 		Arrays.asList(this.categoryids.split(" ")).stream().forEach(categoryid -> {
 			categoryMappings.getCategoryWithId(categoryid).ifPresent(category ->{
-				System.out.println(category);
+				//System.out.println(category);
 				JsonObject categoryJson = new JsonObject();
 				// add a property calle title to the albums object
 				categoryJson.addProperty("categoryId", category.getId());
 				categoryJson.addProperty("categoryName", category.getCategory());
 				categoryJson.addProperty("categoryPath", category.getPathToRoot());
 				categoryJson.addProperty("categoryPathIds", category.getPathIdToRoot());
+				
+				//System.out.println(category.getRootCategoris2());
+				category.getRootCategoris2().forEach(categoryPath ->{
+					JsonObject _categoryJson = new JsonObject();
+					// add a property calle title to the albums object
+					_categoryJson.addProperty("categoryName", categoryPath);
+					if(!categoryList.contains(_categoryJson))
+						categoryList.add(_categoryJson);
+				});
+				//categoryList.add(categoryJson);
 				rootCategoris.add(category.getPathToRoot());
 				/*
 				if(!rootCategoris.contains(""+category.getId()+":"+category.getCategory()))
@@ -122,10 +135,12 @@ public class Document {
 			});
 		});		
 		
+		JsonArray categoris = new JsonArray();
 		rootCategoris.forEach(item -> {	
 			categoris.add(item);			
 		});
 		map.put("categories", categoris);		
+		map.put("category_list", categoryList);
 		return gson.toJson(map);		
 	}
 

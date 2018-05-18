@@ -173,3 +173,26 @@ GET /smart-tv/_search
         }
     }
 }
+
+GET /smart-tv/_search
+{
+  "size": 1,
+  "query": {
+    "match_all": {}
+  },
+  "aggregations": {
+    "by_category_name": {
+      "nested": {
+        "path": "category_list"
+      },
+      "aggs": {
+        "by_brand": {
+          "terms": {
+            "field": "category_list.categoryName",
+            "size": 5
+          }
+        }
+      }
+    }
+  }
+}
