@@ -109,16 +109,27 @@ async function putMappingForSmartTV() {
     "modelname": { type: 'keyword' },
     "modelnumber": { type: 'keyword' },
     "brand": { type: 'keyword' },
-    "productname": { type: 'keyword' },
-    "shortlabel": { type: 'keyword' },
-    "displayname": { type: 'keyword' },
+    "productname": {
+      type: 'text',
+      "copy_to": "product_suggest"
+    },
+    "product_suggest": {
+      "type": "completion"
+    },
+    "shortlabel": { type: 'text',
+    "copy_to": "product_suggest"
+    },
+    "displayname": {
+      type: 'text',
+      "copy_to": "product_suggest"
+    },
     "ean": { type: 'keyword' },
     "currentprice": { type: 'float' },
     "customerrating": { type: 'float' },
     "category_list": {
       "type": "nested",
-      "properties": {        
-        "categoryName": { "type": "keyword" }        
+      "properties": {
+        "categoryName": { "type": "keyword" }
       }
     },
     "categories": {

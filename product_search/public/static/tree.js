@@ -150,8 +150,8 @@ Tree.prototype.visitTree = function (callback) {
 }
 
 
-Tree.prototype.addPath = function (paths, doc_count) {
-    console.log("addPath path:", paths, doc_count);                
+Tree.prototype.addPath = function (paths, doc_count) {    
+    console.log("paths:"+paths+" doc_count:"+doc_count);
     var tree = this;    
     if(paths.length === 1) {
         var root = tree.findNode(paths[0]);                
@@ -160,7 +160,9 @@ Tree.prototype.addPath = function (paths, doc_count) {
             tree._root.children.push(ret);
             return ret;
         }else {
-            //root.payload = doc_count;
+            if(doc_count > 0){ 
+                root.payload = doc_count;
+            }            
             return root;
         }
         
@@ -169,10 +171,13 @@ Tree.prototype.addPath = function (paths, doc_count) {
             var root = tree.findNode(paths[0]);            
             if(root === null){ 
                 var child = new Node(paths[0], doc_count);                
-                var parentNode = this.addPath(paths.splice(1, paths.length), doc_count);
+                var parentNode = this.addPath(paths.splice(1, paths.length), -1);
                 parentNode.children.push(child);
                 return child;
             }else {
+                if(doc_count > 0){ 
+                    root.payload = doc_count;
+                }            
                 //root.payload = doc_count;
                 return root;
             }               

@@ -63,6 +63,9 @@ public class Test {
 				
 				@Override
 				public void onDocumentReady(Document document) {
+					//writeToFile(document.toIndexable(categoryMappings), "tv-heimkino-zubehr-"+document.getId());
+					
+					
 					Optional<Category> rootCat = categoryMappings.getCategoryWithId("SaturnDEdec633087");
 					if(rootCat.isPresent()) {
 						List<String> rootPath = document.isOfCategory(rootCat.get(), categoryMappings);
@@ -76,19 +79,12 @@ public class Test {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							*/
+							*/					
 								
 						}						
 					}
+							
 					
-					
-					
-					
-					/*
-					if(document.hasAttribute("SaturnDEdec474973")) {						
-						writeToFile(document.toIndexable(categoryMappings), "smart-tv-"+document.getId());						
-					}					
-					*/
 				}
 			});                 
             

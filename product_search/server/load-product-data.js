@@ -2,6 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const esConnection = require('./connection-product')
 
+//const folderPath = "./sample-data"
+const folderPath = "./smart-tvs"
+
 /** Clear ES index, parse and index all files from the books directory */
 async function readAndInsertSmartTvs () {
   try {
@@ -9,28 +12,41 @@ async function readAndInsertSmartTvs () {
     await esConnection.resetIndex()
 
     // Read books directory
-    let files = fs.readdirSync('./smart-tvs') ;//.filter(file => file.slice(-4) === '.json')
+    let files = fs.readdirSync(folderPath) ;//.filter(file => file.slice(-4) === '.json')
     console.log(`Found ${files.length} Files`)
 
     var count = 0;
     var bulkOps = [];
     // Read each book file, and index each paragraph in elasticsearch
+    console.log(files.size);
+    if(files.size > 1000){
+
+    }else {
+      for (let file of files) {
+        count ++
+        console.log(`Reading File - ${file}`)
+        const filePath = path.join(folderPath, file)      
+        var smartTv = parseSmartTVFile(filePath)
+        bulkOps.push({ index: { _index: esConnection.index, _type: esConnection.type } })
+        bulkOps.push(smartTv);              
+      } 
+      await esConnection.client.bulk({ body: bulkOps })       
+    }
+    /*
     for (let file of files) {
       count ++
       console.log(`Reading File - ${file}`)
-      const filePath = path.join('./smart-tvs', file)      
+      const filePath = path.join('./sample-data', file)      
       var smartTv = parseSmartTVFile(filePath)
       bulkOps.push({ index: { _index: esConnection.index, _type: esConnection.type } })
-      bulkOps.push(smartTv);
-      //await esConnection.client.bulk({ body: smartTv })      
-      /*
-      const { title, author, paragraphs } = parseSmartTVFile(filePath)
-      await insertBookData(title, author, paragraphs)
-      */
-      //if(count == 10000) break
+      bulkOps.push(smartTv);      
+      if(count == 10) {
+        await esConnection.client.bulk({ body: bulkOps })      
+        count = 0
+      }
     }
+    */
     
-    await esConnection.client.bulk({ body: bulkOps })      
   } catch (err) {
     console.error(err)
   }

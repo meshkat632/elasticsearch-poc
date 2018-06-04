@@ -24,10 +24,33 @@
     <script src="static/tree.js"></script>
 
     <script type="text/javascript" src="angular.treeview/angular.treeview.js"></script>
+    <script type="text/javascript" src="angucomplete/angucomplete.js"></script>
     <link rel="stylesheet" type="text/css" href="angular.treeview/css/angular.treeview.css">
+    <link rel="stylesheet" type="text/css" href="angucomplete/angucomplete.css">
 
     <script>
         const baseUrl = 'http://localhost:3000';
+
+        async function getSuggestion(keyword) {
+
+            const elasticBaseUrl = 'http://localhost:9200';
+
+            var elasticQuery = {
+                "suggest": {
+                    "my_suggestion": {
+                        "prefix": keyword,
+                        "completion": {
+                            "field": "product_suggest"
+                        }
+                    }
+                }
+            };
+
+
+            let json = await axios.post(elasticBaseUrl + "/smart-tv/_search", elasticQuery);
+            return json;
+        }
+
         async function getBrandFacet(keyword, offset) {
 
             const elasticBaseUrl = 'http://localhost:9200';
@@ -137,12 +160,12 @@
             const elasticBaseUrl = 'http://localhost:9200';
 
             var elasticQueryTemplate = {
-                "from": offset,                
-                
-                "sort": [                    
+                "from": offset,
+
+                "sort": [
                     { "currentprice": "desc" },
                     "_score"
-                ],                
+                ],
                 /*
                 "sort": [                  
                     {
@@ -167,7 +190,7 @@
                     }
                 ],
                 */
-                
+
                 "query": {
                     "bool": {
                         "must": {
@@ -232,8 +255,8 @@
 
             if (!(keyword === null || keyword === "")) {
                 elasticQueryTemplate.query.bool.must = {
-                    "match": {
-                        "text": keyword
+                    "prefix": {
+                        "shortlabel": keyword
                     }
                 };
             }
@@ -308,7 +331,7 @@
 
 
 
-        angular.module('checkboxExample', ['star-rating', 'rzModule', 'angularTreeview']).controller('ExampleController', ['$scope', '$timeout', '$window', function ($scope, $timeout, $window) {
+        angular.module('checkboxExample', ['star-rating', 'rzModule', 'angularTreeview', 'angucomplete']).controller('ExampleController', ['$scope', '$timeout', '$window','$q', function ($scope, $timeout, $window, $q) {
 
             console.log($window.Tree);
             console.log($window.Node);
@@ -533,60 +556,62 @@
             $scope.searchResults = [];
             $scope.search();
 
-            /*
-            getCategoryTree().then(function (response) {
-                console.log("getCategoryTree:", response.data);
-                $scope.treedata = [response.data];
-                getCustomerRatingFacet().then(function (response) {
-                    $scope.customerrating_ranges = response.data.aggregations.customerrating_ranges.buckets;
-                    $scope.ratings.forEach(item => {
-                        $scope.customerrating_ranges.forEach(customerrating => {
-                            if (customerrating.from === item.value) {
-                                item.doc_count = customerrating.doc_count;
-                            }
-                        });
+            $scope.onAutoCompleteSelction= function(selection){                            
+                console.log("onAutoCompleteSelction:"+JSON.stringify(selection));
+            }
+            $scope.getSuggestion= function(str){                
+                var deferred = $q.defer();
+                getSuggestion(str).then(function (response) {
+                        console.log("fetchFunction response "+JSON.stringify(response.data.suggest.my_suggestion));
+                        console.log("fetchFunction response"+response.data.suggest.my_suggestion["0"].options);
+                        var suggestion = [];
+                        response.data.suggest.my_suggestion["0"].options.forEach(function(option) {
+                            console.log("option:"+JSON.stringify(option._source.displayname));
+                            suggestion.push( {
+                                "name": option._source.shortlabel,    
+                                "code": option._source.id
+                            });
+                        });                        
+                        console.log(deferred);
+                        deferred.resolve(suggestion);     
+                        
+                        //selectedProduct
+                        $scope.searchKey = str;
+                        $scope.search();
                     });
-                    $scope.$apply();
-                });
-
-            });
-            */
-
-
-
-
-
-
-
-
-
-
-            /*
-            getPriceRangeFacet().then(function (response) {
-                console.log("getPriceRangeFacet response:", response.data.aggregations.currentprice_stats);
-
-                //$scope.priceSlider.options.floor = Math.floor(response.data.aggregations.currentprice_stats.min);
-                //$scope.priceSlider.options.ceil = Math.floor(response.data.aggregations.currentprice_stats.max);
-                /*
-                $scope.priceSlider.minValue = Math.floor(response.data.aggregations.currentprice_stats.min);
-                $scope.priceSlider.maxValue = Math.floor(response.data.aggregations.currentprice_stats.max);
-                $scope.$apply();
-            });
-            */
+                return deferred.promise;                
+            }
+            
+ 
 
         }]);
     </script>
 </head>
 
 <body ng-app="checkboxExample" ng-controller="ExampleController">
+
+
+    <datalist id="comicstitle">
+        <option data-ng-repeat="ttl in titles" value="{{ttl}}">
+    </datalist>
     <div id="sidebar">
         <div class="mui-row">
             <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                <!--
                 <div class="mui--text-black-54 mui--text-body2">
-                    <h1>Key Word</h1> {{searchKey}}</div>
-
+                    <h1>Key Word</h1></div>
+                
                 <div class="mui--text-black-54">
                     <input type="text" ng-model="searchKey" ng-model-options="{ debounce: 500 }" ng-change="newSearch()">
+                </div>
+                -->
+                
+                <div class="mui--text-black-54 mui--text-body2">
+                        <h1>AutoComplete</h1></div>
+                <div class="mui--text-black-54" >
+                    <angucomplete id="ex1" placeholder="Search product" pause="500" selectedobject="selectedProduct" 
+                        fetchfunction="getSuggestion" onselctionfunction="onAutoCompleteSelction" searchfields="name" titlefield="name" minlength="1" inputclass="form-control form-control-small"/>
+                    
                 </div>
 
 
