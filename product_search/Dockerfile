@@ -1,8 +1,8 @@
 # Use Node v8.9.0 LTS
 FROM node:carbon
 
-ENV http_proxy http://proxyUserName:proxyUserPassword@bluecoat.media-saturn.com:80
-ENV https_proxy http://proxyUserName:proxyUserPassword@bluecoat.media-saturn.com:80
+#ENV http_proxy http://proxyUserName:proxyUserPassword@bluecoat.media-saturn.com:80
+#ENV https_proxy http://proxyUserName:proxyUserPassword@bluecoat.media-saturn.com:80
 
 # Setup app working directory
 WORKDIR /usr/src/app
