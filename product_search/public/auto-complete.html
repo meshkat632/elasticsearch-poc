@@ -29,7 +29,7 @@
     <link rel="stylesheet" type="text/css" href="angucomplete/angucomplete.css">
 
     <script>
-        const baseUrl = 'http://localhost:3000';
+        const baseUrl = 'http://http://35.234.105.72:3000';
 
         async function getSuggestion(keyword) {
 
@@ -53,7 +53,7 @@
 
         async function getBrandFacet(keyword, offset) {
 
-            const elasticBaseUrl = 'http://localhost:9200';
+            const elasticBaseUrl = 'http://http://35.234.105.72:9200';
 
             var elasticQuery = {
                 "from": offset,
@@ -86,7 +86,7 @@
 
         async function getCustomerRatingFacet() {
 
-            const elasticBaseUrl = 'http://localhost:9200';
+            const elasticBaseUrl = 'http://http://35.234.105.72:9200';
 
             var elasticQuery = {
                 "size": 0,
@@ -121,7 +121,7 @@
 
         async function getPriceRangeFacet() {
 
-            const elasticBaseUrl = 'http://localhost:9200';
+            const elasticBaseUrl = 'http://http://35.234.105.72:9200';
 
             var elasticQuery = {
                 "size": 0,
@@ -157,7 +157,7 @@
             console.log("brands", brands);
             console.log("rating", rating);
             console.log("priceRange", priceRange);
-            const elasticBaseUrl = 'http://localhost:9200';
+            const elasticBaseUrl = 'http://http://35.234.105.72:9200';
 
             var elasticQueryTemplate = {
                 "from": offset,
