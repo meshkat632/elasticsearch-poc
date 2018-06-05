@@ -8,4 +8,4 @@ discovery.zen.minimum_master_nodes: 1
 xpack.license.self_generated.type: basic
 
 http.cors.enabled: true
-http.cors.allow-origin: /https?:\/\/localhost(:[0-9]+)?/
+http.cors.allow-origin: /https?:\/\/35.234.105.72(:[0-9]+)?/
